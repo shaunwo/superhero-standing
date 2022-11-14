@@ -1,4 +1,4 @@
-<img src="https://github.com/shaunwo/superhero-standing/blob/ce5baef8dfdb98394f0af2ff04676f8b5f305610/public/img/superhero-standing-logo.png" width="250" alt="Superhero Standing Logo" />
+<img src="https://github.com/shaunwo/superhero-standing/blob/29350ac033f9c636918cb36cf30c5002fabace37/public/img/superhero-standing-logo.png" width="250" alt="Superhero Standing Logo" />
 
 by Shaun Worcester
 
@@ -22,7 +22,7 @@ Images (user profile pics + community-provided superhero images) will be stored 
 React with Redux, and Node
 
 ### Database Schema
-![Superhero Standing DB Schema](https://github.com/shaunwo/superhero-standing/blob/9ab7abaf4117de553c6c44600471c5ac80c6fa83/Superhero%20Standing%20DB%20Schema.png)
+![Superhero Standing DB Schema](https://github.com/shaunwo/superhero-standing/blob/29350ac033f9c636918cb36cf30c5002fabace37/Superhero%20Standing%20DB%20Schema.png)
 
 ## Sensitive Information
 * Usernames and Passwords
@@ -33,7 +33,7 @@ React with Redux, and Node
 This will be a mobile-friendly website and I plan to make an evenly-focused full-stack application. This will be an interactive community site where fans can engage with others about the favorite superheroes.
 
 ## User Flow
-![Superhero Standing User Flow Diagram](https://github.com/shaunwo/superhero-standing/blob/9ab7abaf4117de553c6c44600471c5ac80c6fa83/Superhero%20Standing%20User%20Flow%20Diagram.png)
+![Superhero Standing User Flow Diagram](https://github.com/shaunwo/superhero-standing/blob/29350ac033f9c636918cb36cf30c5002fabace37/Superhero%20Standing%20User%20Flow%20Diagram.png)
 
 ## Features
 * A beautifu, clean interface that will appeal to the masses
