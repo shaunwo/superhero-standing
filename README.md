@@ -47,3 +47,22 @@ This will be a mobile-friendly website and I plan to make an evenly-focused full
 ## Possible Issues
 * I have a clear vision of how I want the threaded comments to work (with indented replies), but don't know how to code that at the moment
 * I went through the Redux lessons and want to set up a Store and Reducer for this application, but that's the part of coding for this project that I'm the least confident in, at the moment.
+
+### Instructions for Running Code
+
+To get this application running, download the code and run the following in the Terminal:
+
+#### Backend API
+
+1. `cd backend`
+2. `npm i`
+3. `psql < jobly.sql` <-- once PostgreSQL is running
+4. `nodemon server.js`
+
+#### Frontend Application
+Make sure that PostgreSQL is running, and then you can run the commands below that will run the Backend and Frontend together, using the ***concurrently*** package.
+
+1. `npm i`
+2. `npm start`
+
+Go to [http://localhost:3000/](http://localhost:3000/) in your browser to run/view the application.
