@@ -9,7 +9,7 @@ An application where users can find their favorite superheroes (via a search, or
 Superhero enthusiests of ALL ages that have some time to kill and care to discuss their opinions with fellow fans. Possibly some in the industry as well that are wondering what the general public thinks of different superheroes and various looks from different artists over the years for said superhero.
 
 ## Data Source
-API: [https://apilist.fun/api/superhero-api]()
+API: [https://superheroapi.com](https://superheroapi.com)
 
 APP DB: PostgreSQL
 
