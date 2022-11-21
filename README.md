@@ -56,7 +56,7 @@ To get this application running, download the code and run the following in the 
 
 1. `cd backend`
 2. `npm i`
-3. `psql < jobly.sql` <-- once PostgreSQL is running
+3. `psql < superhero_standing.sql` <-- once PostgreSQL is running
 4. `nodemon server.js`
 
 #### Frontend Application
