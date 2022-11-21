@@ -19,7 +19,7 @@ Images (user profile pics + community-provided superhero images) will be stored 
 
 ## Approach
 ### Tech Stack
-React with Redux, and Node
+React, Express, and Node
 
 ### Database Schema
 ![Superhero Standing DB Schema](https://github.com/shaunwo/superhero-standing/blob/29350ac033f9c636918cb36cf30c5002fabace37/Superhero%20Standing%20DB%20Schema.png)
