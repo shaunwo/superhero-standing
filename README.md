@@ -9,7 +9,7 @@ An application where users can find their favorite superheroes (via a search, or
 Superhero enthusiests of ALL ages that have some time to kill and care to discuss their opinions with fellow fans. Possibly some in the industry as well that are wondering what the general public thinks of different superheroes and various looks from different artists over the years for said superhero.
 
 ## Data Source
-API: [https://apilist.fun/api/superhero-api]()
+API: [https://superheroapi.com](https://superheroapi.com)
 
 APP DB: PostgreSQL
 
@@ -19,7 +19,7 @@ Images (user profile pics + community-provided superhero images) will be stored 
 
 ## Approach
 ### Tech Stack
-React with Redux, and Node
+React, Express, and Node
 
 ### Database Schema
 ![Superhero Standing DB Schema](https://github.com/shaunwo/superhero-standing/blob/29350ac033f9c636918cb36cf30c5002fabace37/Superhero%20Standing%20DB%20Schema.png)
@@ -56,7 +56,7 @@ To get this application running, download the code and run the following in the 
 
 1. `cd backend`
 2. `npm i`
-3. `psql < jobly.sql` <-- once PostgreSQL is running
+3. `psql < superhero_standing.sql` <-- once PostgreSQL is running
 4. `nodemon server.js`
 
 #### Frontend Application
