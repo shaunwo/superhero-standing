@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import SearchForm from './common/SearchForm';
 import SuperheroApi from '../private/api/superhero-api';
-import LoadingSpinner from './common/LoadingSpinner';
+//import LoadingSpinner from './common/LoadingSpinner';
 
 function Search() {
 	console.log('Search for superheros');
@@ -17,14 +17,16 @@ function Search() {
 
 	// trigger another API call if search is entered
 	async function search(name) {
-		//evt.preventDefault();
-		console.log('Searching for: ' + name);
-		let heros = await SuperheroApi.getHeros(name);
-		setHeros(heros);
+		if (name) {
+			console.log('Searching for: ' + name);
+			let heros = await SuperheroApi.getHeros(name);
+			console.log('Heros from api call: ' + heros);
+			setHeros(heros);
+		}
 	}
 
 	// displaying the spinner until the API call returns the companies data
-	if (!heros) return <LoadingSpinner />;
+	//if (!heros) return <LoadingSpinner />;
 
 	return (
 		<>

@@ -23,8 +23,8 @@ function SearchForm({ searchFor }) {
 	function handleSubmit(evt) {
 		// take care of accidentally trying to search for just spaces
 		evt.preventDefault();
+		console.log('searchTerm: ' + searchTerm.trim());
 		searchFor(searchTerm.trim() || undefined);
-		console.log();
 		setSearchTerm(searchTerm.trim());
 	}
 
