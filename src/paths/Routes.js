@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Home from '../components/Home';
 import Search from '../components/Search';
+import HeroDetail from '../components/heros/HeroDetail';
 import Followers from '../components/Followers';
 import LeaderBoard from '../components/LeaderBoard';
 import LoginForm from '../components/account/LoginForm';
@@ -35,6 +36,11 @@ function Paths({ login, signup }) {
 				/>
 				<Route element={<PrivateRoutes />}>
 					<Route exact path="/search" element={<Search />} />
+					<Route
+						exact
+						path="/hero/:id"
+						element={<HeroDetail />}
+					/>
 					<Route
 						exact
 						path="/followers"

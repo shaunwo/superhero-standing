@@ -12,16 +12,35 @@ const axios = require('axios');
 router.get('/search/:searchFor', async function(req, res, next) {
 	const searchFor = req.params.searchFor;
 
-	console.log(
-		'URL: ' +
-			`https://www.superheroapi.com/api/10160133913239144/search/${searchFor}`
-	);
 	axios.get(
 		`https://www.superheroapi.com/api/10160133913239144/search/${searchFor}`
 	)
 		.then((response) => {
-			console.log(response.data.results);
-			return response.data.results.json;
+			console.log('Results: ', response.data.results);
+			const searchResults = {
+				data: response.data.results,
+				statusCode: 200,
+			};
+			return res.json(searchResults);
+		})
+		.catch((error) => {
+			return error;
+		});
+});
+router.get('/hero/:id', async function(req, res, next) {
+	const id = req.params.id;
+
+	console.log(
+		'URL: ' + `https://www.superheroapi.com/api/10160133913239144/${id}`
+	);
+	axios.get(`https://www.superheroapi.com/api/10160133913239144/${id}`)
+		.then((response) => {
+			console.log('Results: ', response.data);
+			const searchResults = {
+				data: response.data,
+				statusCode: 200,
+			};
+			return res.json(searchResults);
 		})
 		.catch((error) => {
 			return error;
