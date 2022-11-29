@@ -28,11 +28,11 @@ function SearchCard({
 					<img
 						src={imageUrl}
 						alt={name}
-						className="float-right ml-5"
+						className="float-right ml-5 rounded"
 					/>
 				)}
-				<h3 className="card-title">{name}</h3>
-				<h4>Powerstats</h4>
+				<h2 className="card-title">{name}</h2>
+				<h3>Powerstats</h3>
 				<ul>
 					<li>Intelligence: {intelligence}</li>
 					<li>Strength: {strength}</li>

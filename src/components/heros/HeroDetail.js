@@ -46,61 +46,112 @@ function HeroDetail() {
 
 	// displaying the hero details on the screen
 	return (
-		<div className="HeroDetail col-md-8 offset-md-2">
-			{hero.image.url && (
-				<img
-					src={hero.image.url}
-					alt={hero.name}
-					className="float-right ml-5"
-				/>
-			)}
-			<h2>{hero.name}</h2>
-			<h3>Powerstats</h3>
-			<ul>
-				<li>Intelligence: {hero.powerstats.intelligence}</li>
-				<li>Strength: {hero.powerstats.strength}</li>
-				<li>Speed: {hero.powerstats.speed}</li>
-				<li>Durability: {hero.powerstats.durability}</li>
-				<li>Power: {hero.powerstats.power}</li>
-				<li>Combat: {hero.powerstats.combat}</li>
-			</ul>
-			<h3>Biography</h3>
-			<ul>
-				<li>Publisher: {hero.biography.publisher}</li>
-				<li>Alignment: {hero.biography.alignment}</li>
-			</ul>
-			<h3>Appearance</h3>
-			<ul>
-				<li>Gender: {hero.appearance.gender}</li>
-				<li>Race: {hero.appearance.race}</li>
-				<li>Height: {hero.appearance.height[0]}</li>
-				<li>Weight: {hero.appearance.weight[0]}</li>
-			</ul>
-			[1]{' '}
-			{/* 'alter-egos': 'No alter egos found.',
-[1]     aliases: [ '-' ],
-[1]     'place-of-birth': 'Somewhere in the Bavarian Alps',
-[1]     'first-appearance': 'GIANT-SIZE X-MEN #1',
-               </ul>
-
-
-[1]   },
-[1]   appearance: {
-[1]     gender: 'Male',
-[1]     race: 'null',
-[1]     height: [ "5'9'", '175 cm' ],
-[1]     weight: [ '195 lb', '88 kg' ],
-[1]     'eye-color': 'Yellow',
-[1]     'hair-color': 'Indigo'
-[1]   },
-[1]   work: {
-[1]     occupation: 'Adventurer, Teacher',
-[1]     base: 'Xavier Institute for Higher Learning, Salem Center, Westchester County, New York (former) Muir Island, Scotland; Braddock Lighthouse'
-[1]   },
-[1]   connections: {
-[1]     'group-affiliation': 'X-Men, formerly Excalibur',
-[1]     relatives: 'Eric Wagner (father, deceased), Margali Szardos (foster mother), Jimaine Szardos (Daytripper, alias Amanda Sefton, foster sister), Stefan Szardos (foster brother, deceased), Mystique (mother), Graydon Creed (half-brother, deceased).'
-[1]   }, */}
+		<div className="HeroDetail">
+			<div class="container">
+				<h1>{hero['name']}</h1>
+				<div class="row">
+					<div className="col-lg-4 col-md-1 col-sm-1 details-block">
+						<h2>Powerstats</h2>
+						<ul>
+							<li>
+								Intelligence:{' '}
+								{hero.powerstats['intelligence']}
+							</li>
+							<li>
+								Strength: {hero.powerstats['strength']}
+							</li>
+							<li>Speed: {hero.powerstats['speed']}</li>
+							<li>
+								Durability:{' '}
+								{hero.powerstats['durability']}
+							</li>
+							<li>Power: {hero.powerstats['power']}</li>
+							<li>Combat: {hero.powerstats['combat']}</li>
+						</ul>
+					</div>
+					<div className="col-lg-4 col-md-1 col-sm-1 details-block">
+						<h2>Biography</h2>
+						<ul>
+							<li>
+								Full Name: {hero.biography['full-name']}
+							</li>
+							<li>
+								Alter Egos:{' '}
+								{hero.biography['alter-egos']}
+							</li>
+							<li>Aliases: {hero.biography['aliases']}</li>
+							<li>
+								Place of Birth:{' '}
+								{hero.biography['place-of-birth']}
+							</li>
+							<li>
+								First Appearance:{' '}
+								{hero.biography['first-appearance']}
+							</li>
+							<li>
+								Publisher: {hero.biography['publisher']}
+							</li>
+							<li>
+								Alignment: {hero.biography['alignment']}
+							</li>
+						</ul>
+					</div>
+					<div className="col-lg-4 col-md-1 col-sm-1">
+						{hero['image']['url'] && (
+							<img
+								src={hero['image']['url']}
+								alt={hero['name']}
+								className="rounded mx-auto d-block"
+							/>
+						)}
+					</div>
+				</div>
+				<div class="row">
+					<div className="col-lg-4 col-md-1 col-sm-1 details-block">
+						<h2>Appearance</h2>
+						<ul>
+							<li>Gender: {hero.appearance['gender']}</li>
+							<li>Race: {hero.appearance['race']}</li>
+							<li>
+								Height: {hero.appearance['height'][0]}
+							</li>
+							<li>
+								Weight: {hero.appearance['weight'][0]}
+							</li>
+							<li>
+								Eye Color:{' '}
+								{hero.appearance['eye-color']}
+							</li>
+							<li>
+								Hair Color:{' '}
+								{hero.appearance['hair-color']}
+							</li>
+						</ul>
+					</div>
+					<div className="col-lg-4 col-md-1 col-sm-1 details-block">
+						<h2>Work</h2>
+						<ul>
+							<li>
+								Occupation: {hero.work['occupation']}
+							</li>
+							<li>Base: {hero.work['base']}</li>
+						</ul>
+					</div>
+					<div className="col-lg-4 col-md-1 col-sm-1 details-block">
+						<h2>Connections</h2>
+						<ul>
+							<li>
+								Group Affiliation:{' '}
+								{hero.connections['group-affiliation']}
+							</li>
+							<li>
+								Relatives:{' '}
+								{hero.connections['relatives']}
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
 		</div>
 	);
 }
