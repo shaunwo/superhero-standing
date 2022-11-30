@@ -2,3 +2,6 @@
 	float: right;
 	width: 150px;
 }
+.card-body button {
+	margin-right: 5px;
+}

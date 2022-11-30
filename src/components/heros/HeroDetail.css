@@ -3,6 +3,18 @@
 .HeroDetail img {
 	width: 300px;
 }
+.HeroDetail button {
+	margin-right: 5px;
+}
+.HeroDetail .statsBox {
+	background-color: #c4bebe;
+	border: 1px solid gray;
+	border-radius: 2%;
+	float: right;
+	font-size: 65%;
+	padding: 4px;
+	width: 190px;
+}
 
 h1,
 h2,

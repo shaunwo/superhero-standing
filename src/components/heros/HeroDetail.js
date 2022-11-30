@@ -47,10 +47,40 @@ function HeroDetail() {
 	// displaying the hero details on the screen
 	return (
 		<div className="HeroDetail">
-			<div class="container">
-				<h1>{hero['name']}</h1>
-				<div class="row">
-					<div className="col-lg-4 col-md-1 col-sm-1 details-block">
+			<div className="container-fluid">
+				<div className="row">
+					<div className="col">
+						<h1>{hero['name']}</h1>
+					</div>
+					<div className="col">
+						<div className="statsBox">
+							<div className="row">
+								<div className="col">
+									Follows: 90
+									<br />
+									Likes: 120
+								</div>
+								<div className="col">
+									Images: 30
+									<br />
+									Comments: 45
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div className="row row-cols-md-2 row-cols-lg-3 g-2 g-lg-3 justify-content-around">
+					<div className="col-lg-4 px-5">
+						{hero['image']['url'] && (
+							<img
+								src={hero['image']['url']}
+								alt={hero['name']}
+								className="rounded mx-auto d-block"
+							/>
+						)}
+					</div>
+					<div className="col-lg-4 details-block">
 						<h2>Powerstats</h2>
 						<ul>
 							<li>
@@ -69,7 +99,7 @@ function HeroDetail() {
 							<li>Combat: {hero.powerstats['combat']}</li>
 						</ul>
 					</div>
-					<div className="col-lg-4 col-md-1 col-sm-1 details-block">
+					<div className="col-lg-4 details-block">
 						<h2>Biography</h2>
 						<ul>
 							<li>
@@ -96,18 +126,7 @@ function HeroDetail() {
 							</li>
 						</ul>
 					</div>
-					<div className="col-lg-4 col-md-1 col-sm-1">
-						{hero['image']['url'] && (
-							<img
-								src={hero['image']['url']}
-								alt={hero['name']}
-								className="rounded mx-auto d-block"
-							/>
-						)}
-					</div>
-				</div>
-				<div class="row">
-					<div className="col-lg-4 col-md-1 col-sm-1 details-block">
+					<div className="col-lg-4 details-block">
 						<h2>Appearance</h2>
 						<ul>
 							<li>Gender: {hero.appearance['gender']}</li>
@@ -128,7 +147,7 @@ function HeroDetail() {
 							</li>
 						</ul>
 					</div>
-					<div className="col-lg-4 col-md-1 col-sm-1 details-block">
+					<div className="col-lg-4 details-block">
 						<h2>Work</h2>
 						<ul>
 							<li>
@@ -137,7 +156,7 @@ function HeroDetail() {
 							<li>Base: {hero.work['base']}</li>
 						</ul>
 					</div>
-					<div className="col-lg-4 col-md-1 col-sm-1 details-block">
+					<div className="col-lg-4 details-block">
 						<h2>Connections</h2>
 						<ul>
 							<li>
@@ -152,6 +171,19 @@ function HeroDetail() {
 					</div>
 				</div>
 			</div>
+
+			<button type="submit" className="btn btn-sm btn-primary">
+				Follow
+			</button>
+			<button type="submit" className="btn btn-sm btn-primary">
+				Like
+			</button>
+			<button type="submit" className="btn btn-sm btn-primary">
+				Comment
+			</button>
+			<button type="submit" className="btn btn-sm btn-primary">
+				Upload Image
+			</button>
 		</div>
 	);
 }

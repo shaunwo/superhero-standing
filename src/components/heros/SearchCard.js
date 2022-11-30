@@ -51,9 +51,29 @@ function SearchCard({
 						</a>
 					</small>
 				</p>
+
+				<button type="submit" className="btn btn-sm btn-primary">
+					Follow
+				</button>
+				<button type="submit" className="btn btn-sm btn-primary">
+					Like
+				</button>
+				<button type="submit" className="btn btn-sm btn-primary">
+					Comment
+				</button>
+				<button type="submit" className="btn btn-sm btn-primary">
+					Upload Image
+				</button>
 			</div>
 		</div>
 	);
 }
+
+/*
+					onSubmit={followHero}
+					onSubmit={likeHero}
+					onSubmit={commentOnHero}
+					onSubmit={uploadImageOfHero}
+*/
 
 export default SearchCard;
