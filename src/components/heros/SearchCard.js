@@ -44,26 +44,51 @@ function SearchCard({
 				<p>
 					<small>
 						<a
-							href={`/hero/${id}`}
+							href={`/search/${id}`}
 							title={`More details on ${name}`}
 						>
 							More Details
 						</a>
 					</small>
 				</p>
+			</div>
+			<div class="card-footer">
+				<a href="#" title="Follow">
+					<img src="/img/follow-icon.png" alt="Follow" />
+				</a>
+				<a href="#" title="Unfollow">
+					<img src="/img/unfollow-icon.png" alt="Unfollow" />
+				</a>
+				<a href="#" title="Love">
+					<img src="/img/love-icon.png" alt="Love" />
+				</a>
+				<a href="#" title="Unlove">
+					<img src="/img/unlove-icon.png" alt="Unlove" />
+				</a>
+				<a
+					data-toggle="collapse"
+					href={`#comments.${id}`}
+					title="Comment"
+				>
+					<img src="/img/comment-icon.png" alt="Comment" />
+				</a>
+				<a
+					data-toggle="collapse"
+					href={`#upload.${id}`}
+					title="Upload YOUR Image"
+				>
+					<img
+						src="/img/upload-image-icon.png"
+						alt="Upload YOUR Image"
+					/>
+				</a>
 
-				<button type="submit" className="btn btn-sm btn-primary">
-					Follow
-				</button>
-				<button type="submit" className="btn btn-sm btn-primary">
-					Like
-				</button>
-				<button type="submit" className="btn btn-sm btn-primary">
-					Comment
-				</button>
-				<button type="submit" className="btn btn-sm btn-primary">
-					Upload Image
-				</button>
+				<div class="collapse" id={`comments.${id}`}>
+					<textarea />
+				</div>
+				<div class="collapse" id={`upload.${id}`}>
+					<input type="file" id="myFile" name="filename" />
+				</div>
 			</div>
 		</div>
 	);

@@ -71,7 +71,7 @@ function HeroDetail() {
 				</div>
 
 				<div className="row row-cols-md-2 row-cols-lg-3 g-2 g-lg-3 justify-content-around">
-					<div className="col-lg-4 px-5">
+					<div className="col-lg-4 px-5 imgBox">
 						{hero['image']['url'] && (
 							<img
 								src={hero['image']['url']}
@@ -172,18 +172,49 @@ function HeroDetail() {
 				</div>
 			</div>
 
-			<button type="submit" className="btn btn-sm btn-primary">
-				Follow
-			</button>
-			<button type="submit" className="btn btn-sm btn-primary">
-				Like
-			</button>
-			<button type="submit" className="btn btn-sm btn-primary">
-				Comment
-			</button>
-			<button type="submit" className="btn btn-sm btn-primary">
-				Upload Image
-			</button>
+			<div className="card" style={{ marginTop: '15px' }}>
+				<div className="card-footer">
+					<a href="#" title="Follow">
+						<img src="/img/follow-icon.png" alt="Follow" />
+					</a>
+					<a href="#" title="Unfollow">
+						<img
+							src="/img/unfollow-icon.png"
+							alt="Unfollow"
+						/>
+					</a>
+					<a href="#" title="Love">
+						<img src="/img/love-icon.png" alt="Love" />
+					</a>
+					<a href="#" title="Unlove">
+						<img src="/img/unlove-icon.png" alt="Unlove" />
+					</a>
+					<a
+						data-toggle="collapse"
+						href={`#comments.${id}`}
+						title="Comment"
+					>
+						<img src="/img/comment-icon.png" alt="Comment" />
+					</a>
+					<a
+						data-toggle="collapse"
+						href={`#upload.${id}`}
+						title="Upload YOUR Image"
+					>
+						<img
+							src="/img/upload-image-icon.png"
+							alt="Upload YOUR Image"
+						/>
+					</a>
+
+					<div class="collapse" id={`comments.${id}`}>
+						<textarea />
+					</div>
+					<div class="collapse" id={`upload.${id}`}>
+						<input type="file" id="myFile" name="filename" />
+					</div>
+				</div>
+			</div>
 		</div>
 	);
 }

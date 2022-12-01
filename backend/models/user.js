@@ -28,8 +28,7 @@ class User {
                   password,
                   first_name AS "firstName",
                   last_name AS "lastName",
-                  email,
-                  is_admin AS "isAdmin"
+                  email
            FROM users
            WHERE username = $1`,
 			[username]
@@ -56,14 +55,7 @@ class User {
 	 * Throws BadRequestError on duplicates.
 	 **/
 
-	static async register({
-		username,
-		password,
-		firstName,
-		lastName,
-		email,
-		isAdmin,
-	}) {
+	static async register({ username, password, firstName, lastName, email }) {
 		const duplicateCheck = await db.query(
 			`SELECT username
            FROM users
@@ -87,10 +79,10 @@ class User {
             first_name,
             last_name,
             email,
-            is_admin)
-           VALUES ($1, $2, $3, $4, $5, $6)
-           RETURNING username, first_name AS "firstName", last_name AS "lastName", email, is_admin AS "isAdmin"`,
-			[username, hashedPassword, firstName, lastName, email, isAdmin]
+		  active)
+           VALUES ($1, $2, $3, $4, $5, TRUE)
+           RETURNING username, first_name AS "firstName", last_name AS "lastName", email`,
+			[username, hashedPassword, firstName, lastName, email]
 		);
 
 		const user = result.rows[0];
@@ -108,8 +100,7 @@ class User {
 			`SELECT username,
                   first_name AS "firstName",
                   last_name AS "lastName",
-                  email,
-                  is_admin AS "isAdmin"
+                  email
            FROM users
            ORDER BY username`
 		);
@@ -130,8 +121,7 @@ class User {
 			`SELECT username,
                   first_name AS "firstName",
                   last_name AS "lastName",
-                  email,
-                  is_admin AS "isAdmin"
+                  email
            FROM users
            WHERE username = $1`,
 			[username]
@@ -172,7 +162,6 @@ class User {
 		const { setCols, values } = sqlForPartialUpdate(data, {
 			firstName: 'first_name',
 			lastName: 'last_name',
-			isAdmin: 'is_admin',
 		});
 		const usernameVarIdx = '$' + (values.length + 1);
 
@@ -182,8 +171,7 @@ class User {
                       RETURNING username,
                                 first_name AS "firstName",
                                 last_name AS "lastName",
-                                email,
-                                is_admin AS "isAdmin"`;
+                                email`;
 		const result = await db.query(querySql, [...values, username]);
 		const user = result.rows[0];
 

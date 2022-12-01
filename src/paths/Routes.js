@@ -38,7 +38,7 @@ function Paths({ login, signup }) {
 					<Route exact path="/search" element={<Search />} />
 					<Route
 						exact
-						path="/hero/:id"
+						path="/search/:id"
 						element={<HeroDetail />}
 					/>
 					<Route

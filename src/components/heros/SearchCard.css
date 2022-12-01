@@ -1,7 +1,13 @@
-.card-body img {
+.card .card-body img {
 	float: right;
 	width: 150px;
 }
 .card-body button {
 	margin-right: 5px;
+}
+.card-footer a {
+	margin-right: 5px;
+}
+.card {
+	margin-bottom: 10px;
 }
