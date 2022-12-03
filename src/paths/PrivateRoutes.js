@@ -11,7 +11,7 @@ import UserContext from '../private/auth/UserContext';
 
 const PrivateRoutes = () => {
 	const { currentUser } = useContext(UserContext);
-	console.log('currentUser:' + currentUser);
+	console.log('currentUser: ', currentUser);
 	return currentUser ? <Outlet /> : <Navigate to="/login" />;
 };
 

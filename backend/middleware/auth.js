@@ -75,9 +75,27 @@ function ensureCorrectUserOrAdmin(req, res, next) {
 	}
 }
 
+function ensureCorrectUserId(req, res, next) {
+	try {
+		const user = res.locals.user;
+		console.log('user in ensureCorrectUserId: ', user);
+		console.log('user_id in ensureCorrectUserId: ' + user.user_id);
+		console.log(
+			'req.params.userId in ensureCorrectUserId: ' + req.params.userId
+		);
+		if (!(user && +user.user_id === +req.params.userId)) {
+			throw new UnauthorizedError();
+		}
+		return next();
+	} catch (err) {
+		return next(err);
+	}
+}
+
 module.exports = {
 	authenticateJWT,
 	ensureLoggedIn,
 	ensureAdmin,
 	ensureCorrectUserOrAdmin,
+	ensureCorrectUserId,
 };

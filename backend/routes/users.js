@@ -5,7 +5,11 @@
 const jsonschema = require('jsonschema');
 
 const express = require('express');
-const { ensureCorrectUserOrAdmin, ensureAdmin } = require('../middleware/auth');
+const {
+	ensureCorrectUserOrAdmin,
+	ensureAdmin,
+	ensureCorrectUserId,
+} = require('../middleware/auth');
 const { BadRequestError } = require('../expressError');
 const User = require('../models/user');
 const { createToken } = require('../helpers/tokens');
@@ -74,6 +78,29 @@ router.get('/:username', ensureCorrectUserOrAdmin, async function(
 	try {
 		const user = await User.get(req.params.username);
 		return res.json({ user });
+	} catch (err) {
+		return next(err);
+	}
+});
+
+/** GET /[username] => { user }
+ *
+ **/
+router.get('/:userId/follow/hero/:heroId', ensureCorrectUserId, async function(
+	req,
+	res,
+	next
+) {
+	console.log(
+		'Inside backend > routes > user.js: ... /:userId/follow/hero/:heroId'
+	);
+	try {
+		console.log('Inside backend > routes > user.js: ');
+		const follow_id = await User.followHero(
+			req.params.userId,
+			req.params.heroId
+		);
+		return res.json({ follow_id });
 	} catch (err) {
 		return next(err);
 	}

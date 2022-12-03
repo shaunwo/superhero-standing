@@ -8,6 +8,7 @@ import './App.css';
 import UserContext from './private/auth/UserContext';
 import LoadingSpinner from './components/common/LoadingSpinner';
 import BackendApi from './private/api/backend-api';
+import SuperheroApi from './private/api/superhero-api';
 import jwt from 'jsonwebtoken';
 
 // Key name for storing token in localStorage for "remember me" re-login
@@ -15,6 +16,7 @@ export const TOKEN_STORAGE_ID = 'ss-token';
 
 function App() {
 	const [infoLoaded, setInfoLoaded] = useState(false);
+	const [heroFollowIds, setHeroFollowIds] = useState(new Set([]));
 	const [currentUser, setCurrentUser] = useState(null);
 	const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID);
 
@@ -51,6 +53,7 @@ function App() {
 							err
 						);
 						setCurrentUser(null);
+						setHeroFollowIds(null);
 					}
 				}
 				setInfoLoaded(true);
@@ -73,16 +76,11 @@ function App() {
 
 	// handles login from anywhere on the site
 	async function login(loginData) {
-		console.log('Inside the function!');
 		try {
-			console.log('inside the try');
 			let token = await BackendApi.login(loginData);
 			setToken(token);
-			console.log('token:' + token);
-			console.log('currentUser:' + currentUser);
 			return { success: true };
 		} catch (errors) {
-			console.error('login failed', errors);
 			return { success: false, errors };
 		}
 	}
@@ -94,9 +92,21 @@ function App() {
 			setToken(token);
 			return { success: true };
 		} catch (errors) {
-			console.error('signup failed', errors);
 			return { success: false, errors };
 		}
+	}
+
+	// checks to see if a hero has been followed, yet
+	function hasFollowedHero(id) {
+		return heroFollowIds.has(id);
+	}
+
+	// follow a hero - API call, and update set of FollowHeroIds
+	async function followHero(id) {
+		if (hasFollowedHero(id)) return;
+		console.log('Inside async function followHero(id) on App.js');
+		let follow_id = await BackendApi.followHero(currentUser.user_id, id);
+		setHeroFollowIds(new Set([...heroFollowIds, follow_id]));
 	}
 
 	// displaying the spinner on the screen if no other data has been loaded, yet
@@ -108,6 +118,8 @@ function App() {
 				value={{
 					currentUser,
 					setCurrentUser,
+					hasFollowedHero,
+					followHero,
 				}}
 			>
 				<div className="App" id="wrapper">

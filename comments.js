@@ -23,7 +23,7 @@ while (comments) {
 		indentLevel += 10;
 		currentParentId = comments.parentId;
 	} else if (comments.parent != currentParentId) {
-		if (indentLevel > 10) {
+		if (indentLevel >= 10) {
 			indentLevel -= 10;
 		} else {
 			indentLevel += 10;

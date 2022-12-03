@@ -1,8 +1,8 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Home from '../components/Home';
-import Search from '../components/Search';
-import HeroDetail from '../components/heros/HeroDetail';
+import Search from '../components/search/Search';
+import HeroDetail from '../components/search/HeroDetail';
 import Followers from '../components/Followers';
 import LeaderBoard from '../components/LeaderBoard';
 import LoginForm from '../components/account/LoginForm';

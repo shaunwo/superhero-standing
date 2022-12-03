@@ -24,13 +24,19 @@ class User {
 	static async authenticate(username, password) {
 		// try to find the user first
 		const result = await db.query(
-			`SELECT username,
-                  password,
-                  first_name AS "firstName",
-                  last_name AS "lastName",
-                  email
-           FROM users
-           WHERE username = $1`,
+			`
+			SELECT 
+				user_id,
+				username,
+				password,
+				first_name AS "firstName",
+				last_name AS "lastName",
+				email
+	          FROM
+				users
+           	WHERE
+				username = $1
+			`,
 			[username]
 		);
 
@@ -118,7 +124,9 @@ class User {
 
 	static async get(username) {
 		const userRes = await db.query(
-			`SELECT username,
+			`SELECT 
+				user_id,
+				username,
                   first_name AS "firstName",
                   last_name AS "lastName",
                   email
@@ -132,6 +140,30 @@ class User {
 		if (!user) throw new NotFoundError(`No user: ${username}`);
 
 		return user;
+	}
+
+	static async followHero(userId, heroId) {
+		const followRes = await db.query(
+			`
+			INSERT INTO
+				follows
+			(
+				user_id,
+				superhero_id,
+				active
+			)
+			VALUES
+				($1, $2, TRUE)
+			RETURNING follow_id
+		    `,
+			[userId, heroId]
+		);
+		console.log('SQL result in backend > models > user.js: ', followRes);
+		const follow_id = followRes.rows[0];
+
+		if (!follow_id) throw new NotFoundError(`No follow: ${heroId}`);
+
+		return follow_id;
 	}
 
 	/** Update user data with `data`.
