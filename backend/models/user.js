@@ -124,14 +124,18 @@ class User {
 
 	static async get(username) {
 		const userRes = await db.query(
-			`SELECT 
+			`
+			SELECT 
 				user_id,
 				username,
-                  first_name AS "firstName",
-                  last_name AS "lastName",
-                  email
-           FROM users
-           WHERE username = $1`,
+				first_name AS "firstName",
+				last_name AS "lastName",
+				email
+           	FROM
+				users
+           	WHERE
+				username = $1
+			`,
 			[username]
 		);
 
@@ -139,31 +143,81 @@ class User {
 
 		if (!user) throw new NotFoundError(`No user: ${username}`);
 
-		return user;
-	}
-
-	static async followHero(userId, heroId) {
-		const followRes = await db.query(
+		// looking for this user's hero followings
+		const userHeroFollowsRes = await db.query(
 			`
-			INSERT INTO
-				follows
-			(
-				user_id,
-				superhero_id,
-				active
-			)
-			VALUES
-				($1, $2, TRUE)
-			RETURNING follow_id
-		    `,
-			[userId, heroId]
+			SELECT
+				f.superhero_id
+			FROM
+			 	follows AS f
+			WHERE
+			 	f.user_id = $1
+					AND
+				f.active = TRUE
+			 `,
+			[user.user_id]
 		);
-		console.log('SQL result in backend > models > user.js: ', followRes);
-		const follow_id = followRes.rows[0];
 
-		if (!follow_id) throw new NotFoundError(`No follow: ${heroId}`);
+		user.heroFollowedIds = userHeroFollowsRes.rows.map(
+			(a) => a.superhero_id
+		);
 
-		return follow_id;
+		// looking for this user's hero likes
+		const userHeroLikesRes = await db.query(
+			`
+			SELECT
+				l.superhero_id
+			FROM
+				likes AS l
+			WHERE
+				l.user_id = $1
+					AND
+				l.active = TRUE
+			`,
+			[user.user_id]
+		);
+
+		user.heroLikedIds = userHeroLikesRes.rows.map((b) => b.superhero_id);
+
+		// looking for this user's hero followings
+		const allUsersHeroFollowsRes = await db.query(
+			`
+			SELECT
+				f.superhero_id,
+				COUNT(*) AS superhero_follow_count
+			FROM
+			 	follows AS f
+			WHERE
+			 	f.active = TRUE
+			GROUP BY
+				superhero_id
+			ORDER BY
+				superhero_id ASC
+			`
+		);
+
+		user.heroAllUsersFollowedIds = allUsersHeroFollowsRes.rows;
+
+		// looking for this user's hero likes
+		const allUsersHeroLikesRes = await db.query(
+			`
+			SELECT
+				l.superhero_id,
+				COUNT(*) AS superhero_like_count
+			FROM
+				likes AS l
+			WHERE
+				l.active = TRUE
+			GROUP BY
+				superhero_id
+			ORDER BY
+				superhero_id ASC
+			`
+		);
+
+		user.heroAllUsersLikedIds = allUsersHeroLikesRes.rows;
+
+		return user;
 	}
 
 	/** Update user data with `data`.

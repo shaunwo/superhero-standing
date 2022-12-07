@@ -26,7 +26,18 @@ function Search() {
 			let heros = searchResults.data.data;
 			console.log('heros:', heros);
 			setHeros(heros);
+			clearAndHidePreviousComments();
 		}
+	}
+
+	function clearAndHidePreviousComments() {
+		document.getElementByClassName('commentsTextArea')[0].value = '';
+		console.log(
+			'textArea value: ' +
+				document.getElementByClassName('commentsTextArea')[0].value
+		);
+		document.getElementByClassName('commentsBox')[0].className =
+			'commentsBox collapse';
 	}
 
 	// displaying the spinner until the API call returns the companies data

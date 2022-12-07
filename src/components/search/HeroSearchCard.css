@@ -9,6 +9,17 @@
 	margin-right: 5px;
 	cursor: pointer;
 }
+.card-footer .activity-counter {
+	margin-right: 10px;
+}
 .card {
 	margin-bottom: 10px;
+}
+.commentsBox {
+	padding: 10px 0;
+}
+.commentsBox button {
+	display: block;
+	clear: both;
+	margin-top: 3px;
 }

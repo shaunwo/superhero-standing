@@ -65,9 +65,58 @@ class BackendApi {
 			'Inside static async followHero(userId, id, data) on backend-api.js'
 		);
 		let res = await this.request(
-			`users/${userId}/follow/hero/${id}`,
+			`heroes/${userId}/follow/hero/${id}`,
 			data,
 			'get'
+		);
+		return res;
+	}
+	// unfollow a hero
+	static async unfollowHero(userId, id, data) {
+		console.log(
+			'Inside static async unfollowHero(userId, id, data) on backend-api.js'
+		);
+		let res = await this.request(
+			`heroes/${userId}/unfollow/hero/${id}`,
+			data,
+			'get'
+		);
+		return res;
+	}
+	// like a hero
+	static async likeHero(userId, id, data) {
+		console.log(
+			'Inside static async likeHero(userId, id, data) on backend-api.js'
+		);
+		let res = await this.request(
+			`heroes/${userId}/like/hero/${id}`,
+			data,
+			'get'
+		);
+		return res;
+	}
+	// unlike a hero
+	static async unlikeHero(userId, id, data) {
+		console.log(
+			'Inside static async unlikeHero(userId, id, data) on backend-api.js'
+		);
+		let res = await this.request(
+			`heroes/${userId}/unlike/hero/${id}`,
+			data,
+			'get'
+		);
+		return res;
+	}
+	// comment on a hero
+	static async commentOnHero(userId, id, data) {
+		console.log(
+			'Inside static async commentOnHero(userId, id, data) on backend-api.js'
+		);
+		console.log('data: ', data);
+		let res = await this.request(
+			`heroes/${userId}/comment/hero/${id}`,
+			data,
+			'post'
 		);
 		return res;
 	}

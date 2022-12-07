@@ -17,6 +17,9 @@ export const TOKEN_STORAGE_ID = 'ss-token';
 function App() {
 	const [infoLoaded, setInfoLoaded] = useState(false);
 	const [heroFollowIds, setHeroFollowIds] = useState(new Set([]));
+	const [heroLikeIds, setHeroLikeIds] = useState(new Set([]));
+	const [allHeroFollowIds, setAllUsersHeroFollowIds] = useState(new Set([]));
+	const [allHeroLikeIds, setAllUsersHeroLikeIds] = useState(new Set([]));
 	const [currentUser, setCurrentUser] = useState(null);
 	const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID);
 
@@ -47,6 +50,16 @@ function App() {
 							username
 						);
 						setCurrentUser(currentUser);
+						setHeroFollowIds(
+							new Set(currentUser.heroFollowedIds)
+						);
+						setHeroLikeIds(new Set(currentUser.heroLikedIds));
+						setAllUsersHeroFollowIds(
+							new Set(currentUser.heroAllUsersFollowedIds)
+						);
+						setAllUsersHeroLikeIds(
+							new Set(currentUser.heroAllUsersLikedIds)
+						);
 					} catch (err) {
 						console.error(
 							'App loadUserInfo: problem loading',
@@ -54,6 +67,7 @@ function App() {
 						);
 						setCurrentUser(null);
 						setHeroFollowIds(null);
+						setHeroLikeIds(null);
 					}
 				}
 				setInfoLoaded(true);
@@ -98,15 +112,62 @@ function App() {
 
 	// checks to see if a hero has been followed, yet
 	function hasFollowedHero(id) {
-		return heroFollowIds.has(id);
+		console.log('hasFollowedHero' + id);
+		console.log('heroFollowIds: ', heroFollowIds);
+		return heroFollowIds.has(+id);
+	}
+	// checks to see if a hero has been liked, yet
+	function hasLikedHero(id) {
+		console.log('hasLikedHero' + id);
+		console.log('heroLikeIds: ', heroLikeIds);
+		return heroLikeIds.has(+id);
+	}
+	function hasAllUsersFollowedHero(id) {
+		console.log('allHeroFollowIds' + id);
+		console.log('allHeroFollowIds: ', allHeroFollowIds);
+		return allHeroFollowIds.has(+id);
+	}
+	function hasAllUsersLikedHero(id) {
+		return allHeroLikeIds.has(+id);
 	}
 
 	// follow a hero - API call, and update set of FollowHeroIds
-	async function followHero(id) {
+	function followHero(id) {
 		if (hasFollowedHero(id)) return;
-		console.log('Inside async function followHero(id) on App.js');
-		let follow_id = await BackendApi.followHero(currentUser.user_id, id);
-		setHeroFollowIds(new Set([...heroFollowIds, follow_id]));
+		console.log('Inside function followHero(id) on App.js');
+		BackendApi.followHero(currentUser.user_id, id);
+		setHeroFollowIds(new Set([...heroFollowIds, +id]));
+	}
+	// UNfollow a hero - API call, and update set of FollowHeroIds
+	function unfollowHero(id) {
+		if (!hasFollowedHero(id)) return;
+		console.log('Inside function unfollowHero(id) on App.js');
+		BackendApi.unfollowHero(currentUser.user_id, id);
+		setHeroFollowIds(new Set([heroFollowIds.delete(id)]));
+	}
+
+	// like a hero - API call, and update set of LikeHeroIds
+	function likeHero(id) {
+		if (hasLikedHero(id)) return;
+		console.log('Inside function likeHero(id) on App.js');
+		BackendApi.likeHero(currentUser.user_id, id);
+		setHeroLikeIds(new Set([...heroLikeIds, +id]));
+	}
+	// UNlike a hero - API call, and update set of LikeHeroIds
+	function unlikeHero(id) {
+		if (!hasLikedHero(id)) return;
+		console.log('Inside function unlikeHero(id) on App.js');
+		BackendApi.unlikeHero(currentUser.user_id, id);
+		setHeroLikeIds(new Set([heroLikeIds.delete(id)]));
+	}
+
+	// comment on a hero - API call, and update set of LikeHeroIds
+	function commentOnHero(commentData, id) {
+		console.log('commentData: ', commentData);
+		const { comments } = commentData;
+		console.log('comments: ', comments);
+		console.log('Inside function commentOnHero(id) on App.js');
+		BackendApi.commentOnHero(currentUser.user_id, id, commentData);
 	}
 
 	// displaying the spinner on the screen if no other data has been loaded, yet
@@ -120,6 +181,13 @@ function App() {
 					setCurrentUser,
 					hasFollowedHero,
 					followHero,
+					unfollowHero,
+					hasLikedHero,
+					likeHero,
+					unlikeHero,
+					hasAllUsersFollowedHero,
+					hasAllUsersLikedHero,
+					commentOnHero,
 				}}
 			>
 				<div className="App" id="wrapper">

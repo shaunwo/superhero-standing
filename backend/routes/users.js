@@ -83,29 +83,6 @@ router.get('/:username', ensureCorrectUserOrAdmin, async function(
 	}
 });
 
-/** GET /[username] => { user }
- *
- **/
-router.get('/:userId/follow/hero/:heroId', ensureCorrectUserId, async function(
-	req,
-	res,
-	next
-) {
-	console.log(
-		'Inside backend > routes > user.js: ... /:userId/follow/hero/:heroId'
-	);
-	try {
-		console.log('Inside backend > routes > user.js: ');
-		const follow_id = await User.followHero(
-			req.params.userId,
-			req.params.heroId
-		);
-		return res.json({ follow_id });
-	} catch (err) {
-		return next(err);
-	}
-});
-
 /** PATCH /[username] { user } => { user }
  *
  * Data can include:
