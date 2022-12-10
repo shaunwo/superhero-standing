@@ -48,27 +48,7 @@ function HeroDetail() {
 	return (
 		<div className="HeroDetail">
 			<div className="container-fluid">
-				<div className="row">
-					<div className="col">
-						<h1>{hero['name']}</h1>
-					</div>
-					<div className="col">
-						<div className="statsBox">
-							<div className="row">
-								<div className="col">
-									Follows: 90
-									<br />
-									Likes: 120
-								</div>
-								<div className="col">
-									Images: 30
-									<br />
-									Comments: 45
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+				<h1>{hero['name']}</h1>
 
 				<div className="row row-cols-md-2 row-cols-lg-3 g-2 g-lg-3 justify-content-around">
 					<div className="col-lg-4 px-5 imgBox">
@@ -184,10 +164,10 @@ function HeroDetail() {
 						/>
 					</a>
 					<a href="#" title="Love">
-						<img src="/img/love-icon.png" alt="Love" />
+						<img src="/img/like-icon.png" alt="Like" />
 					</a>
 					<a href="#" title="Unlove">
-						<img src="/img/unlove-icon.png" alt="Unlove" />
+						<img src="/img/unlike-icon.png" alt="Unlike" />
 					</a>
 					<a
 						data-toggle="collapse"
