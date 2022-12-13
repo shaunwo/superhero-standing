@@ -18,7 +18,9 @@ function App() {
 	const [infoLoaded, setInfoLoaded] = useState(false);
 	const [heroFollowIds, setHeroFollowIds] = useState(new Set([]));
 	const [heroLikeIds, setHeroLikeIds] = useState(new Set([]));
-	const [allHeroFollowIds, setAllUsersHeroFollowIds] = useState(new Set([]));
+	const [allHeroFollowIds, setAllUsersHeroFollowIds] = useState(
+		new Object({})
+	);
 	const [allHeroLikeIds, setAllUsersHeroLikeIds] = useState(new Set([]));
 	const [currentUser, setCurrentUser] = useState(null);
 	const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID);
@@ -55,7 +57,9 @@ function App() {
 						);
 						setHeroLikeIds(new Set(currentUser.heroLikedIds));
 						setAllUsersHeroFollowIds(
-							new Set(currentUser.heroAllUsersFollowedIds)
+							new Object(
+								currentUser.heroAllUsersFollowedIds
+							)
 						);
 						setAllUsersHeroLikeIds(
 							new Set(currentUser.heroAllUsersLikedIds)

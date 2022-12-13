@@ -21,6 +21,7 @@ function SearchCard({
 	combat,
 }) {
 	const {
+		currentUser,
 		hasFollowedHero,
 		followHero,
 		unfollowHero,
@@ -28,6 +29,7 @@ function SearchCard({
 		likeHero,
 		unlikeHero,
 		hasAllUsersFollowedHero,
+		heroAllUsersFollowedIds,
 		hasAllUsersLikedHero,
 		commentOnHero,
 	} = useContext(UserContext);
@@ -62,7 +64,7 @@ function SearchCard({
 		},
 		[id, hasLikedHero]
 	);
-	React.useEffect(
+	/*React.useEffect(
 		function updateAllUserFollowedStatus() {
 			setAllUsersFollowed(hasAllUsersFollowedHero(id));
 			console.log(hasAllUsersFollowedHero(id));
@@ -75,7 +77,7 @@ function SearchCard({
 			console.log(hasAllUsersLikedHero(id));
 		},
 		[id, hasAllUsersLikedHero]
-	);
+	);*/
 
 	// follow/unfollow a hero
 	async function handleFollow(evt) {
@@ -130,6 +132,10 @@ function SearchCard({
 	}
 
 	console.log('allUsersFollowed: ', allUsersFollowed);
+	console.log(
+		'heroAllUsersFollowedIds: ',
+		currentUser.heroAllUsersFollowedIds
+	);
 
 	// displaying the search card on the screen
 	return (
@@ -177,7 +183,11 @@ function SearchCard({
 						<img src="/img/follow-icon.png" alt="Follow" />
 					</a>
 				)}
-				<span className="activity-counter">NumFollows</span>
+				<span className="activity-counter">
+					{!currentUser.heroAllUsersFollowedIds[id]
+						? 0
+						: currentUser.heroAllUsersFollowedIds[id]}
+				</span>
 				{liked && (
 					<a title="Unlike" onClick={handleUnlike}>
 						<img src="/img/unlike-icon.png" alt="Unlike" />

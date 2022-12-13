@@ -179,7 +179,7 @@ class User {
 
 		user.heroLikedIds = userHeroLikesRes.rows.map((b) => b.superhero_id);
 
-		// looking for this user's hero followings
+		// looking for ALL users' hero followings
 		const allUsersHeroFollowsRes = await db.query(
 			`
 			SELECT
@@ -195,10 +195,24 @@ class User {
 				superhero_id ASC
 			`
 		);
+		//user.heroAllUsersFollowedIds = allUsersHeroFollowsRes.rows;
+		let heroAllUsersFollowedIds = {};
+		for (let c = 0; c < allUsersHeroFollowsRes.rows.length; c++) {
+			console.log(c);
+			console.log(allUsersHeroFollowsRes.rows[c]);
+			console.log(allUsersHeroFollowsRes.rows[c].superhero_id);
+			console.log(
+				allUsersHeroFollowsRes.rows[c].superhero_follow_count
+			);
+			let arrKey = +allUsersHeroFollowsRes.rows[c].superhero_id;
+			let arrVal = +allUsersHeroFollowsRes.rows[c]
+				.superhero_follow_count;
+			heroAllUsersFollowedIds[arrKey] = arrVal;
+		}
+		console.log(heroAllUsersFollowedIds);
+		user.heroAllUsersFollowedIds = heroAllUsersFollowedIds;
 
-		user.heroAllUsersFollowedIds = allUsersHeroFollowsRes.rows;
-
-		// looking for this user's hero likes
+		// looking for ALL users' hero likes
 		const allUsersHeroLikesRes = await db.query(
 			`
 			SELECT
