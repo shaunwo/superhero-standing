@@ -18,10 +18,15 @@ function App() {
 	const [infoLoaded, setInfoLoaded] = useState(false);
 	const [heroFollowIds, setHeroFollowIds] = useState(new Set([]));
 	const [heroLikeIds, setHeroLikeIds] = useState(new Set([]));
-	const [allHeroFollowIds, setAllUsersHeroFollowIds] = useState(
+	const [heroAllUsersFollowedIds, setHeroAllUsersFollowedIds] = useState(
 		new Object({})
 	);
-	const [allHeroLikeIds, setAllUsersHeroLikeIds] = useState(new Set([]));
+	const [heroAllUsersLikedIds, setHeroAllUsersLikedIds] = useState(
+		new Object({})
+	);
+	const [heroAllUsersCommentsIds, setHeroAllUsersCommentsIds] = useState(
+		new Object({})
+	);
 	const [currentUser, setCurrentUser] = useState(null);
 	const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID);
 
@@ -56,13 +61,18 @@ function App() {
 							new Set(currentUser.heroFollowedIds)
 						);
 						setHeroLikeIds(new Set(currentUser.heroLikedIds));
-						setAllUsersHeroFollowIds(
+						setHeroAllUsersFollowedIds(
 							new Object(
 								currentUser.heroAllUsersFollowedIds
 							)
 						);
-						setAllUsersHeroLikeIds(
-							new Set(currentUser.heroAllUsersLikedIds)
+						setHeroAllUsersLikedIds(
+							new Object(currentUser.heroAllUsersLikedIds)
+						);
+						setHeroAllUsersCommentsIds(
+							new Object(
+								currentUser.heroAllUsersCommentsIds
+							)
 						);
 					} catch (err) {
 						console.error(
@@ -72,6 +82,9 @@ function App() {
 						setCurrentUser(null);
 						setHeroFollowIds(null);
 						setHeroLikeIds(null);
+						setHeroAllUsersFollowedIds(null);
+						setHeroAllUsersLikedIds(null);
+						setHeroAllUsersCommentsIds(null);
 					}
 				}
 				setInfoLoaded(true);
@@ -126,14 +139,6 @@ function App() {
 		console.log('heroLikeIds: ', heroLikeIds);
 		return heroLikeIds.has(+id);
 	}
-	function hasAllUsersFollowedHero(id) {
-		console.log('allHeroFollowIds' + id);
-		console.log('allHeroFollowIds: ', allHeroFollowIds);
-		return allHeroFollowIds.has(+id);
-	}
-	function hasAllUsersLikedHero(id) {
-		return allHeroLikeIds.has(+id);
-	}
 
 	// follow a hero - API call, and update set of FollowHeroIds
 	function followHero(id) {
@@ -141,6 +146,9 @@ function App() {
 		console.log('Inside function followHero(id) on App.js');
 		BackendApi.followHero(currentUser.user_id, id);
 		setHeroFollowIds(new Set([...heroFollowIds, +id]));
+		setHeroAllUsersFollowedIds(
+			(heroAllUsersFollowedIds[id] = heroAllUsersFollowedIds[id] + 1)
+		);
 	}
 	// UNfollow a hero - API call, and update set of FollowHeroIds
 	function unfollowHero(id) {
@@ -148,6 +156,9 @@ function App() {
 		console.log('Inside function unfollowHero(id) on App.js');
 		BackendApi.unfollowHero(currentUser.user_id, id);
 		setHeroFollowIds(new Set([heroFollowIds.delete(id)]));
+		setHeroAllUsersFollowedIds(
+			(heroAllUsersFollowedIds[id] = heroAllUsersFollowedIds[id] - 1)
+		);
 	}
 
 	// like a hero - API call, and update set of LikeHeroIds
@@ -189,8 +200,6 @@ function App() {
 					hasLikedHero,
 					likeHero,
 					unlikeHero,
-					hasAllUsersFollowedHero,
-					hasAllUsersLikedHero,
 					commentOnHero,
 				}}
 			>

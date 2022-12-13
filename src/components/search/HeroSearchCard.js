@@ -136,6 +136,10 @@ function SearchCard({
 		'heroAllUsersFollowedIds: ',
 		currentUser.heroAllUsersFollowedIds
 	);
+	console.log(
+		'heroAllUsersCommentsIds: ',
+		currentUser.heroAllUsersCommentsIds
+	);
 
 	// displaying the search card on the screen
 	return (
@@ -198,7 +202,11 @@ function SearchCard({
 						<img src="/img/like-icon.png" alt="Like" />
 					</a>
 				)}
-				<span className="activity-counter">NumLikes</span>
+				<span className="activity-counter">
+					{!currentUser.heroAllUsersLikedIds[id]
+						? 0
+						: currentUser.heroAllUsersLikedIds[id]}
+				</span>
 				<a
 					data-toggle="collapse"
 					href={`#commentsArea.${id}`}
@@ -206,7 +214,11 @@ function SearchCard({
 				>
 					<img src="/img/comment-icon.png" alt="Comment" />
 				</a>
-				<span className="activity-counter">NumComments</span>
+				<span className="activity-counter">
+					{!currentUser.heroAllUsersCommentsIds[id]
+						? 0
+						: currentUser.heroAllUsersCommentsIds[id]}
+				</span>
 				<a
 					data-toggle="collapse"
 					href={`#upload.${id}`}

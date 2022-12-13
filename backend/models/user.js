@@ -195,21 +195,12 @@ class User {
 				superhero_id ASC
 			`
 		);
-		//user.heroAllUsersFollowedIds = allUsersHeroFollowsRes.rows;
 		let heroAllUsersFollowedIds = {};
 		for (let c = 0; c < allUsersHeroFollowsRes.rows.length; c++) {
-			console.log(c);
-			console.log(allUsersHeroFollowsRes.rows[c]);
-			console.log(allUsersHeroFollowsRes.rows[c].superhero_id);
-			console.log(
-				allUsersHeroFollowsRes.rows[c].superhero_follow_count
-			);
-			let arrKey = +allUsersHeroFollowsRes.rows[c].superhero_id;
-			let arrVal = +allUsersHeroFollowsRes.rows[c]
-				.superhero_follow_count;
-			heroAllUsersFollowedIds[arrKey] = arrVal;
+			heroAllUsersFollowedIds[
+				+allUsersHeroFollowsRes.rows[c].superhero_id
+			] = +allUsersHeroFollowsRes.rows[c].superhero_follow_count;
 		}
-		console.log(heroAllUsersFollowedIds);
 		user.heroAllUsersFollowedIds = heroAllUsersFollowedIds;
 
 		// looking for ALL users' hero likes
@@ -228,8 +219,37 @@ class User {
 				superhero_id ASC
 			`
 		);
+		let heroAllUsersLikedIds = {};
+		for (let d = 0; d < allUsersHeroLikesRes.rows.length; d++) {
+			heroAllUsersLikedIds[
+				+allUsersHeroLikesRes.rows[d].superhero_id
+			] = +allUsersHeroLikesRes.rows[d].superhero_like_count;
+		}
+		user.heroAllUsersLikedIds = heroAllUsersLikedIds;
 
-		user.heroAllUsersLikedIds = allUsersHeroLikesRes.rows;
+		// looking for ALL users' hero comments
+		const allUsersHeroCommentsRes = await db.query(
+			`
+					SELECT
+						c.superhero_id,
+						COUNT(*) AS superhero_comment_count
+					FROM
+						comments AS c
+					WHERE
+						c.active = TRUE
+					GROUP BY
+						superhero_id
+					ORDER BY
+						superhero_id ASC
+					`
+		);
+		let heroAllUsersCommentsIds = {};
+		for (let e = 0; e < allUsersHeroCommentsRes.rows.length; e++) {
+			heroAllUsersCommentsIds[
+				+allUsersHeroCommentsRes.rows[e].superhero_id
+			] = +allUsersHeroCommentsRes.rows[e].superhero_comment_count;
+		}
+		user.heroAllUsersCommentsIds = heroAllUsersCommentsIds;
 
 		return user;
 	}
