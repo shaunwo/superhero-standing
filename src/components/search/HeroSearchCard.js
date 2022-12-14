@@ -114,6 +114,7 @@ function SearchCard({
 		setCommentFormData((l) => ({ ...l, [name]: value }));
 	}
 
+	console.log('followed: ', followed);
 	console.log('allUsersFollowed: ', allUsersFollowed);
 	console.log(
 		'heroAllUsersFollowedIds: ',
@@ -219,11 +220,11 @@ function SearchCard({
 				<a
 					data-toggle="collapse"
 					href={`#upload.${id}`}
-					title="Upload YOUR Image"
+					title={`Upload YOUR Image for ${name}`}
 				>
 					<img
 						src="/img/upload-image-icon.png"
-						alt="Upload YOUR Image"
+						alt={`Upload YOUR Image for ${name}`}
 					/>
 				</a>
 				<span className="activity-counter">NumImages</span>

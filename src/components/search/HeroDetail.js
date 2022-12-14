@@ -39,6 +39,29 @@ function HeroDetail() {
 	// setting hero in state
 	const [hero, setHero] = useState(null);
 
+	React.useEffect(
+		function updateFollowedStatus() {
+			console.log(
+				'HeroCard useEffect updateFollowedStatus',
+				'id=',
+				id
+			);
+			console.log('inside React.useEffect id: ' + id);
+			setFollowed(hasFollowedHero(id));
+			console.log(hasFollowedHero(id));
+		},
+		[id, hasFollowedHero]
+	);
+	React.useEffect(
+		function updateLikedStatus() {
+			console.log('HeroCard useEffect updateLikedStatus', 'id=', id);
+			console.log('inside React.useEffect id: ' + id);
+			setLiked(hasLikedHero(id));
+			console.log(hasLikedHero(id));
+		},
+		[id, hasLikedHero]
+	);
+
 	// generating details for hero
 	useEffect(
 		function getHeroDetails() {
@@ -110,7 +133,16 @@ function HeroDetail() {
 		setCommentFormData((l) => ({ ...l, [name]: value }));
 	}
 
-	console.log(hero);
+	console.log('followed: ', followed);
+	console.log('allUsersFollowed: ', allUsersFollowed);
+	console.log(
+		'heroAllUsersFollowedIds: ',
+		currentUser.heroAllUsersFollowedIds
+	);
+	console.log(
+		'heroAllUsersCommentsIds: ',
+		currentUser.heroAllUsersCommentsIds
+	);
 
 	// displaying the spinner until the API call returns the heroes data
 	if (!hero) return <LoadingSpinner />;
@@ -232,16 +264,15 @@ function HeroDetail() {
 						</ul>
 					</div>
 				</div>
-			</div>
-
-			<div class="row row-cols-md-2 row-cols-lg-3 g-2 g-lg-3 justify-content-around">
-				<div className="col-lg-6 details-block">
-					<h2>User Comments</h2>
-					<p>Coming soon...</p>
-				</div>
-				<div className="col-lg-6 details-block">
-					<h2>User Images</h2>
-					<p>Coming soon...</p>
+				<div class="row row-cols-md-2 row-cols-lg-3 g-2 g-lg-3 justify-content-around">
+					<div className="col-lg-6 details-block">
+						<h2>User Comments</h2>
+						<p>Coming soon...</p>
+					</div>
+					<div className="col-lg-6 details-block">
+						<h2>User Images</h2>
+						<p>Coming soon...</p>
+					</div>
 				</div>
 			</div>
 
