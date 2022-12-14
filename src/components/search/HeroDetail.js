@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import UserContext from '../../private/auth/UserContext';
 import SuperheroApi from '../../private/api/superhero-api';
 import LoadingSpinner from '../common/LoadingSpinner';
 import './HeroDetail.css';
@@ -16,6 +17,24 @@ import './HeroDetail.css';
 function HeroDetail() {
 	const { id } = useParams();
 	console.debug('HeroDetail', 'id=', id);
+	const {
+		currentUser,
+		hasFollowedHero,
+		followHero,
+		unfollowHero,
+		hasLikedHero,
+		likeHero,
+		unlikeHero,
+		commentOnHero,
+	} = useContext(UserContext);
+	const [followed, setFollowed] = useState();
+	const [liked, setLiked] = useState();
+	const [allUsersFollowed, setAllUsersFollowed] = useState();
+	const [allUsersLiked, setAllUsersLiked] = useState();
+
+	const [commentFormData, setCommentFormData] = useState({
+		comments: '',
+	});
 
 	// setting hero in state
 	const [hero, setHero] = useState(null);
@@ -39,10 +58,73 @@ function HeroDetail() {
 		[id]
 	);
 
+	// follow/unfollow a hero
+	async function handleFollow(evt) {
+		if (hasFollowedHero(id)) return;
+
+		// followHero is a method within the SuperheroApi class
+		followHero(id);
+		setFollowed(true);
+	}
+	async function handleUnfollow(evt) {
+		if (!hasFollowedHero(id)) return;
+
+		// followHero is a method within the SuperheroApi class
+		unfollowHero(id);
+		setFollowed(false);
+	}
+
+	// like/unlike a hero
+	async function handleLike(evt) {
+		if (hasLikedHero(id)) return;
+
+		// likeHero is a method within the SuperheroApi class
+		likeHero(id);
+		setLiked(true);
+	}
+	async function handleUnlike(evt) {
+		if (!hasLikedHero(id)) return;
+
+		// likeHero is a method within the SuperheroApi class
+		unlikeHero(id);
+		setLiked(false);
+	}
+
+	// add comment for a hero
+	async function handleComment(evt) {
+		evt.preventDefault();
+		// commentOnHero is a method within the SuperheroApi class
+		commentOnHero(commentFormData, id);
+		clearAndHideComments(id);
+	}
+
+	function clearAndHideComments(id) {
+		document.getElementById('comments.' + id).value = '';
+		document.getElementById('comments.' + id).className =
+			'commentsBox collapse';
+	}
+
+	// updating the comment form fields
+	function handleChange(evt) {
+		const { name, value } = evt.target;
+		setCommentFormData((l) => ({ ...l, [name]: value }));
+	}
+
 	console.log(hero);
 
 	// displaying the spinner until the API call returns the heroes data
 	if (!hero) return <LoadingSpinner />;
+
+	let heroAllUsersFollowedCount = !currentUser.heroAllUsersFollowedIds[id]
+		? 0
+		: currentUser.heroAllUsersFollowedIds[id];
+	let heroAllUsersLikedCount = !currentUser.heroAllUsersLikedIds[id]
+		? 0
+		: currentUser.heroAllUsersLikedIds[id];
+
+	let heroAllUsersCommentsCount = !currentUser.heroAllUsersCommentsIds[id]
+		? 0
+		: currentUser.heroAllUsersCommentsIds[id];
 
 	// displaying the hero details on the screen
 	return (
@@ -152,30 +234,85 @@ function HeroDetail() {
 				</div>
 			</div>
 
+			<div class="row row-cols-md-2 row-cols-lg-3 g-2 g-lg-3 justify-content-around">
+				<div className="col-lg-6 details-block">
+					<h2>User Comments</h2>
+					<p>Coming soon...</p>
+				</div>
+				<div className="col-lg-6 details-block">
+					<h2>User Images</h2>
+					<p>Coming soon...</p>
+				</div>
+			</div>
+
 			<div className="card" id="heroActions">
 				<div className="card-footer">
-					<a href="#" title="Follow">
-						<img src="/img/follow-icon.png" alt="Follow" />
-					</a>
-					<a href="#" title="Unfollow">
-						<img
-							src="/img/unfollow-icon.png"
-							alt="Unfollow"
-						/>
-					</a>
-					<a href="#" title="Love">
-						<img src="/img/like-icon.png" alt="Like" />
-					</a>
-					<a href="#" title="Unlove">
-						<img src="/img/unlike-icon.png" alt="Unlike" />
-					</a>
+					{followed && (
+						<a
+							title={`Unfollow ${hero['name']}`}
+							onClick={handleUnfollow}
+						>
+							<img
+								src="/img/unfollow-icon.png"
+								alt="Unfollow"
+							/>
+						</a>
+					)}
+					{!followed && (
+						<a
+							title={`Follow ${hero['name']}`}
+							onClick={handleFollow}
+						>
+							<img
+								src="/img/follow-icon.png"
+								alt="Follow"
+							/>
+						</a>
+					)}
+					<span
+						className="activity-counter"
+						title={`${heroAllUsersFollowedCount} Follow(s) on ${hero['name']}`}
+					>
+						{heroAllUsersFollowedCount}
+					</span>
+					{liked && (
+						<a
+							title={`Unlike ${hero['name']}`}
+							onClick={handleUnlike}
+						>
+							<img
+								src="/img/unlike-icon.png"
+								alt="Unlike"
+							/>
+						</a>
+					)}
+					{!liked && (
+						<a
+							title={`Like ${hero['name']}`}
+							onClick={handleLike}
+						>
+							<img src="/img/like-icon.png" alt="Like" />
+						</a>
+					)}
+					<span
+						className="activity-counter"
+						title={`${heroAllUsersLikedCount} Like(s) on ${hero['name']}`}
+					>
+						{heroAllUsersLikedCount}
+					</span>
 					<a
 						data-toggle="collapse"
-						href={`#comments.${id}`}
-						title="Comment"
+						href={`#commentsArea.${id}`}
+						title={`Comment on ${hero['name']}`}
 					>
 						<img src="/img/comment-icon.png" alt="Comment" />
 					</a>
+					<span
+						className="activity-counter"
+						title={`${heroAllUsersCommentsCount} Comment(s) on ${hero['name']}`}
+					>
+						{heroAllUsersCommentsCount}
+					</span>
 					<a
 						data-toggle="collapse"
 						href={`#upload.${id}`}
@@ -186,11 +323,30 @@ function HeroDetail() {
 							alt="Upload YOUR Image"
 						/>
 					</a>
-
-					<div class="collapse" id={`comments.${id}`}>
-						<textarea />
+					<span className="activity-counter">NumImages</span>
+					<div
+						className="collapse commentsBox"
+						id={`commentsArea.${id}`}
+					>
+						<form onSubmit={handleComment}>
+							<textarea
+								name="comments"
+								value={commentFormData.comments}
+								onChange={handleChange}
+								rows="3"
+								cols="70"
+								className="commentsTextArea"
+								id={`comments.${id}`}
+							/>
+							<button
+								className="btn btn-sm btn-primary"
+								onClick={handleComment}
+							>
+								Add Comment
+							</button>
+						</form>
 					</div>
-					<div class="collapse" id={`upload.${id}`}>
+					<div className="collapse" id={`upload.${id}`}>
 						<input type="file" id="myFile" name="filename" />
 					</div>
 				</div>

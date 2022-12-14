@@ -16,7 +16,7 @@ function Search() {
 		search();
 	}, []);
 
-	let searchTriggered = false;
+	let searchPrompt = '';
 
 	// trigger another API call if search is entered
 	async function search(name) {
@@ -28,20 +28,17 @@ function Search() {
 			let heros = searchResults.data.data;
 			console.log('heros:', heros);
 			setHeros(heros);
-			searchTriggered = true;
+			if (!heros || !heros.length) changeNoResultsText();
 		}
+	}
+
+	function changeNoResultsText() {
+		document.getElementById('searchPrompt').innerText =
+			'Sorry, no results were found. Please try another search to find your favorite superhero!';
 	}
 
 	// displaying the spinner until the API call returns the companies data
 	//if (!heros) return <LoadingSpinner />;
-
-	let searchPrompt = '';
-	if (searchTriggered) {
-		searchPrompt = 'Sorry, no results were found!';
-	} else {
-		searchPrompt =
-			'Enter a phrase and search for your favorite superhero, now!';
-	}
 
 	return (
 		<>
@@ -65,7 +62,10 @@ function Search() {
 					))}
 				</div>
 			) : (
-				<p className="lead">{searchPrompt}</p>
+				<p id="searchPrompt">
+					Enter a phrase and search for your favorite superhero,
+					now!
+				</p>
 			)}
 		</>
 	);

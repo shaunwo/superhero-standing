@@ -28,9 +28,6 @@ function SearchCard({
 		hasLikedHero,
 		likeHero,
 		unlikeHero,
-		hasAllUsersFollowedHero,
-		heroAllUsersFollowedIds,
-		hasAllUsersLikedHero,
 		commentOnHero,
 	} = useContext(UserContext);
 	const [followed, setFollowed] = useState();
@@ -64,20 +61,6 @@ function SearchCard({
 		},
 		[id, hasLikedHero]
 	);
-	/*React.useEffect(
-		function updateAllUserFollowedStatus() {
-			setAllUsersFollowed(hasAllUsersFollowedHero(id));
-			console.log(hasAllUsersFollowedHero(id));
-		},
-		[id, hasAllUsersFollowedHero]
-	);
-	React.useEffect(
-		function updateAllUserLikedStatus() {
-			setAllUsersLiked(hasAllUsersLikedHero(id));
-			console.log(hasAllUsersLikedHero(id));
-		},
-		[id, hasAllUsersLikedHero]
-	);*/
 
 	// follow/unfollow a hero
 	async function handleFollow(evt) {
@@ -141,6 +124,17 @@ function SearchCard({
 		currentUser.heroAllUsersCommentsIds
 	);
 
+	let heroAllUsersFollowedCount = !currentUser.heroAllUsersFollowedIds[id]
+		? 0
+		: currentUser.heroAllUsersFollowedIds[id];
+	let heroAllUsersLikedCount = !currentUser.heroAllUsersLikedIds[id]
+		? 0
+		: currentUser.heroAllUsersLikedIds[id];
+
+	let heroAllUsersCommentsCount = !currentUser.heroAllUsersCommentsIds[id]
+		? 0
+		: currentUser.heroAllUsersCommentsIds[id];
+
 	// displaying the search card on the screen
 	return (
 		<div className="card">
@@ -175,7 +169,7 @@ function SearchCard({
 			</div>
 			<div className="card-footer">
 				{followed && (
-					<a title="Unfollow" onClick={handleUnfollow}>
+					<a title={`Unfollow ${name}`} onClick={handleUnfollow}>
 						<img
 							src="/img/unfollow-icon.png"
 							alt="Unfollow"
@@ -183,41 +177,44 @@ function SearchCard({
 					</a>
 				)}
 				{!followed && (
-					<a title="Follow" onClick={handleFollow}>
+					<a title={`Follow ${name}`} onClick={handleFollow}>
 						<img src="/img/follow-icon.png" alt="Follow" />
 					</a>
 				)}
-				<span className="activity-counter">
-					{!currentUser.heroAllUsersFollowedIds[id]
-						? 0
-						: currentUser.heroAllUsersFollowedIds[id]}
+				<span
+					className="activity-counter"
+					title={`${heroAllUsersFollowedCount} Follow(s) on ${name}`}
+				>
+					{heroAllUsersFollowedCount}
 				</span>
 				{liked && (
-					<a title="Unlike" onClick={handleUnlike}>
+					<a title={`Unlike ${name}`} onClick={handleUnlike}>
 						<img src="/img/unlike-icon.png" alt="Unlike" />
 					</a>
 				)}
 				{!liked && (
-					<a title="Like" onClick={handleLike}>
+					<a title={`Like ${name}`} onClick={handleLike}>
 						<img src="/img/like-icon.png" alt="Like" />
 					</a>
 				)}
-				<span className="activity-counter">
-					{!currentUser.heroAllUsersLikedIds[id]
-						? 0
-						: currentUser.heroAllUsersLikedIds[id]}
+				<span
+					className="activity-counter"
+					title={`${heroAllUsersLikedCount} Like(s) on ${name}`}
+				>
+					{heroAllUsersLikedCount}
 				</span>
 				<a
 					data-toggle="collapse"
 					href={`#commentsArea.${id}`}
-					title="Comment"
+					title={`Comment on ${name}`}
 				>
 					<img src="/img/comment-icon.png" alt="Comment" />
 				</a>
-				<span className="activity-counter">
-					{!currentUser.heroAllUsersCommentsIds[id]
-						? 0
-						: currentUser.heroAllUsersCommentsIds[id]}
+				<span
+					className="activity-counter"
+					title={`${heroAllUsersCommentsCount} Comment(s) on ${name}`}
+				>
+					{heroAllUsersCommentsCount}
 				</span>
 				<a
 					data-toggle="collapse"
@@ -229,7 +226,7 @@ function SearchCard({
 						alt="Upload YOUR Image"
 					/>
 				</a>
-				<span className="activity-counter">NumComments</span>
+				<span className="activity-counter">NumImages</span>
 				<div
 					className="collapse commentsBox"
 					id={`commentsArea.${id}`}
@@ -259,12 +256,5 @@ function SearchCard({
 		</div>
 	);
 }
-
-/*
-					onSubmit={followHero}
-					onSubmit={likeHero}
-					onSubmit={commentOnHero}
-					onSubmit={uploadImageOfHero}
-*/
 
 export default SearchCard;
