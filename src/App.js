@@ -146,8 +146,18 @@ function App() {
 		console.log('Inside function followHero(id) on App.js');
 		BackendApi.followHero(currentUser.user_id, id);
 		setHeroFollowIds(new Set([...heroFollowIds, +id]));
+		console.log('heroAllUsersFollowedIds[id] - id value ONLY: ' + +id);
+		console.log(
+			'heroAllUsersFollowedIds: ',
+			currentUser.heroAllUsersFollowedIds
+		);
+		console.log(
+			'heroAllUsersFollowedIds[id]: ',
+			currentUser.heroAllUsersFollowedIds[id]
+		);
 		setHeroAllUsersFollowedIds(
-			(heroAllUsersFollowedIds[id] = heroAllUsersFollowedIds[id] + 1)
+			(currentUser.heroAllUsersFollowedIds[id] =
+				currentUser.heroAllUsersFollowedIds[id] + 1)
 		);
 	}
 	// UNfollow a hero - API call, and update set of FollowHeroIds
@@ -157,7 +167,8 @@ function App() {
 		BackendApi.unfollowHero(currentUser.user_id, id);
 		setHeroFollowIds(new Set([heroFollowIds.delete(id)]));
 		setHeroAllUsersFollowedIds(
-			(heroAllUsersFollowedIds[id] = heroAllUsersFollowedIds[id] - 1)
+			(currentUser.heroAllUsersFollowedIds[id] =
+				currentUser.heroAllUsersFollowedIds[id] - 1)
 		);
 	}
 
@@ -167,6 +178,10 @@ function App() {
 		console.log('Inside function likeHero(id) on App.js');
 		BackendApi.likeHero(currentUser.user_id, id);
 		setHeroLikeIds(new Set([...heroLikeIds, +id]));
+		setHeroAllUsersLikedIds(
+			(currentUser.heroAllUsersLikedIds[id] =
+				currentUser.heroAllUsersLikedIds[id] + 1)
+		);
 	}
 	// UNlike a hero - API call, and update set of LikeHeroIds
 	function unlikeHero(id) {
@@ -174,6 +189,10 @@ function App() {
 		console.log('Inside function unlikeHero(id) on App.js');
 		BackendApi.unlikeHero(currentUser.user_id, id);
 		setHeroLikeIds(new Set([heroLikeIds.delete(id)]));
+		setHeroAllUsersLikedIds(
+			(currentUser.heroAllUsersLikedIds[id] =
+				currentUser.heroAllUsersLikedIds[id] - 1)
+		);
 	}
 
 	// comment on a hero - API call, and update set of LikeHeroIds
@@ -183,6 +202,10 @@ function App() {
 		console.log('comments: ', comments);
 		console.log('Inside function commentOnHero(id) on App.js');
 		BackendApi.commentOnHero(currentUser.user_id, id, commentData);
+		setHeroAllUsersCommentsIds(
+			(currentUser.heroAllUsersCommentsIds[id] =
+				currentUser.heroAllUsersCommentsIds[id] + 1)
+		);
 	}
 
 	// displaying the spinner on the screen if no other data has been loaded, yet
@@ -201,6 +224,9 @@ function App() {
 					likeHero,
 					unlikeHero,
 					commentOnHero,
+					heroAllUsersFollowedIds,
+					heroAllUsersLikedIds,
+					heroAllUsersCommentsIds,
 				}}
 			>
 				<div className="App" id="wrapper">
