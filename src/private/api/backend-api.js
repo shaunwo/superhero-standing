@@ -53,6 +53,12 @@ class BackendApi {
 		return res.user;
 	}
 
+	// getting the info on the selected user
+	static async getOtherUser(username) {
+		let res = await this.request(`users/${username}`);
+		return res.user;
+	}
+
 	// updating the user profile
 	static async saveProfile(username, data) {
 		let res = await this.request(`users/${username}`, data, 'patch');

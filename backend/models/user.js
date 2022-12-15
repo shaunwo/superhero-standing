@@ -130,7 +130,9 @@ class User {
 				username,
 				first_name AS "firstName",
 				last_name AS "lastName",
-				email
+				email,
+				location,
+				bio
            	FROM
 				users
            	WHERE
@@ -287,11 +289,14 @@ class User {
 
 		const querySql = `UPDATE users 
                       SET ${setCols} 
+				  , last_updated_dt=CURRENT_TIMESTAMP
                       WHERE username = ${usernameVarIdx} 
                       RETURNING username,
                                 first_name AS "firstName",
                                 last_name AS "lastName",
-                                email`;
+                                email,
+						  location,
+						  bio`;
 		const result = await db.query(querySql, [...values, username]);
 		const user = result.rows[0];
 

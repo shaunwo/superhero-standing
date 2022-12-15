@@ -17,8 +17,8 @@ function Navigation({ logout }) {
 					</NavLink>
 				</li>
 				<li className="nav-item mr-4">
-					<NavLink className="nav-link" to="/followers">
-						Followers
+					<NavLink className="nav-link" to="/following">
+						Following
 					</NavLink>
 				</li>
 				<li className="nav-item mr-4">

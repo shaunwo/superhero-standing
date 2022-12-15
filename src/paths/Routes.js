@@ -3,11 +3,12 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Home from '../components/Home';
 import Search from '../components/search/Search';
 import HeroDetail from '../components/search/HeroDetail';
-import Followers from '../components/Followers';
-import LeaderBoard from '../components/LeaderBoard';
+import Following from '../components/activity/Following';
+import LeaderBoard from '../components/activity/LeaderBoard';
 import LoginForm from '../components/account/LoginForm';
 import SignupForm from '../components/account/SignupForm';
 import ProfileForm from '../components/account/ProfileForm';
+import ProfileView from '../components/account/ProfileView';
 import PrivateRoutes from './PrivateRoutes';
 
 /** Site-wide routes.
@@ -43,8 +44,8 @@ function Paths({ login, signup }) {
 					/>
 					<Route
 						exact
-						path="/followers"
-						element={<Followers />}
+						path="/following"
+						element={<Following />}
 					/>
 					<Route
 						exact
@@ -55,6 +56,11 @@ function Paths({ login, signup }) {
 						exact
 						path="/profile"
 						element={<ProfileForm />}
+					/>
+					<Route
+						exact
+						path="/profile/:username"
+						element={<ProfileView />}
 					/>
 				</Route>
 				<Route path="*" element={<Navigate to="/" replace />} />
