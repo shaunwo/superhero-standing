@@ -1,8 +1,10 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import UserContext from '../../private/auth/UserContext';
+import BackendApi from '../../private/api/backend-api';
 import SuperheroApi from '../../private/api/superhero-api';
 import LoadingSpinner from '../common/LoadingSpinner';
+import CommentCard from './HeroCommentCard';
 import './HeroDetail.css';
 
 /** Hero Detail page.
@@ -31,7 +33,7 @@ function HeroDetail() {
 	const [liked, setLiked] = useState();
 	const [allUsersFollowed, setAllUsersFollowed] = useState();
 	const [allUsersLiked, setAllUsersLiked] = useState();
-
+	const [heroComments, setHeroComments] = useState();
 	const [commentFormData, setCommentFormData] = useState({
 		comments: '',
 	});
@@ -39,7 +41,7 @@ function HeroDetail() {
 	// setting hero in state
 	const [hero, setHero] = useState(null);
 
-	React.useEffect(
+	useEffect(
 		function updateFollowedStatus() {
 			console.log(
 				'HeroCard useEffect updateFollowedStatus',
@@ -52,7 +54,7 @@ function HeroDetail() {
 		},
 		[id, hasFollowedHero]
 	);
-	React.useEffect(
+	useEffect(
 		function updateLikedStatus() {
 			console.log('HeroCard useEffect updateLikedStatus', 'id=', id);
 			console.log('inside React.useEffect id: ' + id);
@@ -143,6 +145,31 @@ function HeroDetail() {
 		'heroAllUsersCommentsIds: ',
 		currentUser.heroAllUsersCommentsIds
 	);
+
+	// pulling comments for the hero
+	useEffect(
+		function getHeroComments() {
+			async function getHeroCommentsAPI() {
+				try {
+					let heroCommentsRes = await BackendApi.getUserComments(
+						id
+					);
+					let heroComments = heroCommentsRes;
+					console.log('heroComments: ', heroComments);
+					setHeroComments(heroComments);
+				} catch (err) {
+					console.error(
+						'App getHeroCommentsAPI: problem loading',
+						err
+					);
+				}
+			}
+			getHeroCommentsAPI();
+		},
+		[id]
+	);
+
+	console.log('heroComments: ', heroComments);
 
 	// displaying the spinner until the API call returns the heroes data
 	if (!hero) return <LoadingSpinner />;
@@ -267,7 +294,20 @@ function HeroDetail() {
 				<div class="row row-cols-md-2 row-cols-lg-3 g-2 g-lg-3 justify-content-around">
 					<div className="col-lg-6 details-block">
 						<h2>User Comments</h2>
-						<p>Coming soon...</p>
+						{heroComments && heroComments.length ? (
+							<div className="SuperheroComments">
+								{heroComments.map((c) => (
+									<CommentCard
+										user_id={c.user_id}
+										comment={c.comments}
+										created_dt={c.created_dt}
+										username={c.username}
+									/>
+								))}
+							</div>
+						) : (
+							<p>No comments on this hero, yet.</p>
+						)}
 					</div>
 					<div className="col-lg-6 details-block">
 						<h2>User Images</h2>
