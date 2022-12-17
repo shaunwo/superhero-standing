@@ -253,6 +253,85 @@ class User {
 		}
 		user.heroAllUsersCommentsIds = heroAllUsersCommentsIds;
 
+		// looking for this user's mortal followings
+		const userMortalFollowsRes = await db.query(
+			`
+			SELECT
+				u.connectee_user_id
+			FROM
+			 	user_connections AS u
+			WHERE
+			 	u.connector_user_id = $1
+			 `,
+			[user.user_id]
+		);
+
+		user.mortalFollowedIds = userMortalFollowsRes.rows.map(
+			(f) => f.connectee_user_id
+		);
+
+		return user;
+	}
+
+	static async getOther(id) {
+		const userRes = await db.query(
+			`
+			SELECT 
+				user_id,
+				username,
+				first_name AS "firstName",
+				last_name AS "lastName",
+				email,
+				location,
+				bio
+           	FROM
+				users
+           	WHERE
+				user_id = $1
+			`,
+			[id]
+		);
+
+		const user = userRes.rows[0];
+
+		if (!user) throw new NotFoundError(`No user: ${id}`);
+
+		// looking for this user's hero followings
+		const userHeroFollowsRes = await db.query(
+			`
+			SELECT
+				f.superhero_id
+			FROM
+			 	follows AS f
+			WHERE
+			 	f.user_id = $1
+					AND
+				f.active = TRUE
+			 `,
+			[user.user_id]
+		);
+
+		user.heroFollowedIds = userHeroFollowsRes.rows.map(
+			(a) => a.superhero_id
+		);
+
+		// looking for this user's hero likes
+		const userHeroLikesRes = await db.query(
+			`
+			SELECT
+				l.superhero_id
+			FROM
+				likes AS l
+			WHERE
+				l.user_id = $1
+					AND
+				l.active = TRUE
+			`,
+			[user.user_id]
+		);
+
+		user.heroLikedIds = userHeroLikesRes.rows.map((b) => b.superhero_id);
+
 		return user;
 	}
 
@@ -319,6 +398,50 @@ class User {
 		const user = result.rows[0];
 
 		if (!user) throw new NotFoundError(`No user: ${username}`);
+	}
+
+	/* 
+	FOLLOW / UNFOLLOW USER
+	*/
+	static async followUser(connector_user_id, connectee_user_id) {
+		const userRes = await db.query(
+			`
+			INSERT INTO
+				user_connections
+					(connector_user_id,
+					connectee_user_id,
+					status,
+					active)
+			VALUES
+				($1, $2, 0, TRUE)
+			RETURNING
+				connection_id
+				`,
+			[connector_user_id, connectee_user_id]
+		);
+
+		const user = userRes.rows[0];
+
+		if (!user) throw new NotFoundError(`No user: ${connectee_user_id}`);
+	}
+	static async unfollowUser(connector_user_id, connectee_user_id) {
+		const userRes = await db.query(
+			`
+			DELETE FROM
+				user_connections
+			WHERE
+				connector_user_id=$1
+					AND
+				connectee_user_id=$2
+			RETURNING
+				connection_id
+				`,
+			[connector_user_id, connectee_user_id]
+		);
+
+		const user = userRes.rows[0];
+
+		if (!user) throw new NotFoundError(`No user: ${connectee_user_id}`);
 	}
 }
 

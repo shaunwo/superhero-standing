@@ -9,6 +9,7 @@ function ProfileForm() {
 
 	// setting veriables from the form fields passed in the form
 	const [formData, setFormData] = useState({
+		user_id: currentUser.user_id,
 		firstName: currentUser.firstName,
 		lastName: currentUser.lastName,
 		email: currentUser.email,
@@ -36,6 +37,7 @@ function ProfileForm() {
 		evt.preventDefault();
 
 		let profileData = {
+			user_id: formData.user_id,
 			firstName: formData.firstName,
 			lastName: formData.lastName,
 			email: formData.email,
@@ -84,6 +86,9 @@ function ProfileForm() {
 	return (
 		<>
 			<h1 className="mb-3">Profile</h1>
+			<p>
+				<a href={`/profile/`}>View Your Public-Facing Profile</a>
+			</p>
 			<div className="card">
 				<div className="card-body">
 					<form>

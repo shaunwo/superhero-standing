@@ -17,6 +17,7 @@ export const TOKEN_STORAGE_ID = 'ss-token';
 function App() {
 	const [infoLoaded, setInfoLoaded] = useState(false);
 	const [heroFollowIds, setHeroFollowIds] = useState(new Set([]));
+	const [mortalFollowIds, setMortalFollowIds] = useState(new Set([]));
 	const [heroLikeIds, setHeroLikeIds] = useState(new Set([]));
 	const [heroAllUsersFollowedIds, setHeroAllUsersFollowedIds] = useState(
 		new Object({})
@@ -74,6 +75,9 @@ function App() {
 								currentUser.heroAllUsersCommentsIds
 							)
 						);
+						setMortalFollowIds(
+							new Set(currentUser.mortalFollowedIds)
+						);
 					} catch (err) {
 						console.error(
 							'App loadUserInfo: problem loading',
@@ -85,6 +89,7 @@ function App() {
 						setHeroAllUsersFollowedIds(null);
 						setHeroAllUsersLikedIds(null);
 						setHeroAllUsersCommentsIds(null);
+						setMortalFollowIds(null);
 					}
 				}
 				setInfoLoaded(true);
@@ -208,6 +213,27 @@ function App() {
 		);
 	}
 
+	// follow a mortal - API call, and update set of FollowMortalIds
+	function followMortal(id) {
+		//if (hasFollowedHero(id)) return;
+		console.log('Inside function followMortal(id) on App.js');
+		BackendApi.followMortal(currentUser.user_id, id);
+		setMortalFollowIds(new Set([...mortalFollowIds, +id]));
+	}
+	// unfollow a mortal - API call, and update set of FollowMortalIds
+	function unfollowMortal(id) {
+		//if (!hasFollowedHero(id)) return;
+		console.log('Inside function unfollowMortal(id) on App.js');
+		BackendApi.unfollowMortal(currentUser.user_id, id);
+		setMortalFollowIds(new Set([mortalFollowIds.delete(id)]));
+	}
+	// checks to see if a hero has been followed, yet
+	function hasFollowedMortal(id) {
+		console.log('hasFollowedMortal' + id);
+		console.log('mortalFollowIds: ', mortalFollowIds);
+		return mortalFollowIds.has(+id);
+	}
+
 	// displaying the spinner on the screen if no other data has been loaded, yet
 	if (!infoLoaded) return <LoadingSpinner />;
 
@@ -224,6 +250,9 @@ function App() {
 					likeHero,
 					unlikeHero,
 					commentOnHero,
+					hasFollowedMortal,
+					followMortal,
+					unfollowMortal,
 					heroAllUsersFollowedIds,
 					heroAllUsersLikedIds,
 					heroAllUsersCommentsIds,

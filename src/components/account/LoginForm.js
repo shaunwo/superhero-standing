@@ -42,7 +42,6 @@ function LoginForm({ login }) {
 		let result = await login(formData);
 		if (result.success) {
 			navigate('/home');
-			//window.location.href = '/home';
 		} else {
 			setFormErrors(result.errors);
 		}

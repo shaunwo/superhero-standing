@@ -54,8 +54,8 @@ class BackendApi {
 	}
 
 	// getting the info on the selected user
-	static async getOtherUser(username) {
-		let res = await this.request(`users/${username}`);
+	static async getOtherUser(id) {
+		let res = await this.request(`users/other/${id}`);
 		return res.user;
 	}
 
@@ -123,6 +123,40 @@ class BackendApi {
 			`heroes/${userId}/comment/hero/${id}`,
 			data,
 			'post'
+		);
+		return res;
+	}
+
+	// pull comments from DB for a hero
+	static async getUserComments(id, data) {
+		console.log(
+			'Inside static async getUserComments(id, data) on backend-api.js'
+		);
+		let res = await this.request(`heroes/comments/${id}`, data, 'get');
+		return res;
+	}
+
+	// follow a mortal
+	static async followMortal(userId, id, data) {
+		console.log(
+			'Inside static async followMortal(userId, id, data) on backend-api.js'
+		);
+		let res = await this.request(
+			`users/follow/${userId}/${id}`,
+			data,
+			'get'
+		);
+		return res;
+	}
+	// unfollow a mortal
+	static async unfollowMortal(userId, id, data) {
+		console.log(
+			'Inside static async unfollowMortal(userId, id, data) on backend-api.js'
+		);
+		let res = await this.request(
+			`users/unfollow/${userId}/${id}`,
+			data,
+			'get'
 		);
 		return res;
 	}

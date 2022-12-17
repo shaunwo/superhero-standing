@@ -241,6 +241,36 @@ class Hero {
 
 		return comment_id;
 	}
+
+	// pull comments for a hero
+	static async heroComments(heroId) {
+		const heroCommentRes = await db.query(
+			`
+				SELECT
+					c.*,
+					u.username
+				FROM
+					comments c
+				JOIN
+					users u ON c.user_id=u.user_id
+				WHERE
+					superhero_id=$1
+						AND
+					c.active=TRUE
+						AND
+					u.active=TRUE
+				ORDER BY
+					created_dt DESC
+				`,
+			[heroId]
+		);
+		console.log(
+			'SQL result in backend > models > user.js: ',
+			heroCommentRes
+		);
+		const comments = heroCommentRes.rows;
+		return comments;
+	}
 }
 
 module.exports = Hero;

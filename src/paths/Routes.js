@@ -55,11 +55,16 @@ function Paths({ login, signup }) {
 					<Route
 						exact
 						path="/profile"
+						element={<ProfileView />}
+					/>
+					<Route
+						exact
+						path="/profile/edit"
 						element={<ProfileForm />}
 					/>
 					<Route
 						exact
-						path="/profile/:username"
+						path="/profile/:id"
 						element={<ProfileView />}
 					/>
 				</Route>

@@ -5,7 +5,7 @@
 const jsonschema = require('jsonschema');
 
 const express = require('express');
-const { ensureCorrectUserId } = require('../middleware/auth');
+const { ensureCorrectUserId, ensureLoggedIn } = require('../middleware/auth');
 const { BadRequestError } = require('../expressError');
 const Hero = require('../models/hero');
 const { createToken } = require('../helpers/tokens');
@@ -112,5 +112,18 @@ router.post(
 		}
 	}
 );
+
+router.get('/comments/:heroId', ensureLoggedIn, async function(req, res, next) {
+	console.log('Inside backend > routes > heroes.js: ... /comments/:heroId');
+	try {
+		console.log('Inside backend > routes > user.js: ');
+		const { comments } = req.body;
+		console.log('comments: ', comments);
+		const commentOnHero = await Hero.heroComments(req.params.heroId);
+		return res.json(commentOnHero);
+	} catch (err) {
+		return next(err);
+	}
+});
 
 module.exports = router;

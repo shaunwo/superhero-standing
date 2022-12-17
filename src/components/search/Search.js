@@ -16,8 +16,6 @@ function Search() {
 		search();
 	}, []);
 
-	let searchPrompt = '';
-
 	// trigger another API call if search is entered
 	async function search(name) {
 		if (name) {

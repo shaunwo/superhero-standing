@@ -79,6 +79,44 @@ router.get('/:username', ensureLoggedIn, async function(req, res, next) {
 		return next(err);
 	}
 });
+router.get('/other/:id', ensureLoggedIn, async function(req, res, next) {
+	try {
+		const user = await User.getOther(req.params.id);
+		return res.json({ user });
+	} catch (err) {
+		return next(err);
+	}
+});
+router.get(
+	'/follow/:connector_user_id/:connectee_user_id',
+	ensureLoggedIn,
+	async function(req, res, next) {
+		try {
+			const user = await User.followUser(
+				req.params.connector_user_id,
+				req.params.connectee_user_id
+			);
+			return res.json({ user });
+		} catch (err) {
+			return next(err);
+		}
+	}
+);
+router.get(
+	'/unfollow/:connector_user_id/:connectee_user_id',
+	ensureLoggedIn,
+	async function(req, res, next) {
+		try {
+			const user = await User.unfollowUser(
+				req.params.connector_user_id,
+				req.params.connectee_user_id
+			);
+			return res.json({ user });
+		} catch (err) {
+			return next(err);
+		}
+	}
+);
 
 /** PATCH /[username] { user } => { user }
  *
