@@ -48,6 +48,7 @@ CREATE TABLE follows (
 CREATE TABLE likes (
   like_id INT GENERATED ALWAYS AS IDENTITY,
   user_id INT NOT NULL,
+  username VARCHAR(25) NOT NULL,
   superhero_id INT NOT NULL,
   created_dt TIMESTAMP NOT NULL DEFAULT NOW(),
   last_updated_dt TIMESTAMP NULL,
@@ -61,7 +62,10 @@ CREATE TABLE likes (
 CREATE TABLE recent_activity (
   activity_id INT GENERATED ALWAYS AS IDENTITY,
   user_id INT NOT NULL,
-  description TEXT NULL,
+  username VARCHAR(25) NOT NULL,
+  superhero_id INT NOT NULL,
+  superhero_name TEXT NOT NULL,
+  description TEXT NOT NULL,
   created_dt TIMESTAMP NOT NULL DEFAULT NOW(),
   PRIMARY KEY(activity_id),
   CONSTRAINT fk_user_id
