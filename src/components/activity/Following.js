@@ -2,12 +2,33 @@ import React, { useContext } from 'react';
 import UserContext from '../../private/auth/UserContext';
 import HeroFollowCard from './HeroFollowCard';
 import MortalFollowCard from './MortalFollowCard';
+import SuperheroApi from '../../private/api/superhero-api';
+import axios from 'axios';
 
 function Following() {
 	const { currentUser, heroFollowIds } = useContext(UserContext);
 
 	console.log('currentUser: ', currentUser);
 	console.log('heroFollowedIds: ', currentUser.heroFollowedIds);
+
+	currentUser.heroFollowedIds.map((h) =>
+		console.log('heroFollowedId: ' + h)
+	);
+
+	async function findAllFollowedHeros() {
+		let baseURL = 'http://localhost:3001/api/hero';
+		let heroData = await Promise.all([
+			currentUser.heroFollowedIds.map(
+				(h) => axios.get(`${baseURL}/${h}`)
+				//console.log(${baseURL}/${h})
+			),
+		]).then((result) => {
+			console.log(result);
+		});
+		console.log(heroData);
+	}
+	findAllFollowedHeros();
+
 	return (
 		<>
 			<h1>Following</h1>
