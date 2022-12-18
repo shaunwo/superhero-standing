@@ -7,13 +7,11 @@ class SuperheroApi {
 	static token;
 
 	static async request(endpoint, param, data = {}, method = 'get') {
-		console.log('API Call:', endpoint, param, data, method);
-
+		console.log('API Call endpoint: ' + endpoint);
+		console.log('API Call param: ' + param);
 		//there are multiple ways to pass an authorization token, this is how you pass it in the header.
 		//this has been provided to show you another way to pass the token. you are only expected to read this code for this project.
-		const url = `${BASE_URL}${endpoint}/${encodeURIComponent(
-			param.trim()
-		)}`;
+		const url = `${BASE_URL}${endpoint}/${encodeURIComponent(param)}`;
 		console.log('URL for API call: ' + url);
 		const headers = {
 			'Access-Control-Allow-Origin': '*',

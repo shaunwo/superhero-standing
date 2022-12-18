@@ -12,25 +12,33 @@ const { createToken } = require('../helpers/tokens');
 
 const router = express.Router();
 
-router.get('/:userId/follow/hero/:heroId', ensureCorrectUserId, async function(
-	req,
-	res,
-	next
-) {
-	console.log(
-		'Inside backend > routes > user.js: ... /:userId/follow/hero/:heroId'
-	);
-	try {
-		console.log('Inside backend > routes > user.js: ');
-		const follow_id = await Hero.followHero(
-			req.params.userId,
-			req.params.heroId
+router.get(
+	'/:userId/follow/hero/:heroId/:username/:superheroName',
+	ensureCorrectUserId,
+	async function(req, res, next) {
+		console.log(
+			'Inside backend > routes > user.js: ... /:userId/follow/hero/:heroId/:username/:superheroName'
 		);
-		return res.json({ follow_id });
-	} catch (err) {
-		return next(err);
+		try {
+			console.log('Inside backend > routes > user.js: ');
+			console.log('req.params.userId: ' + req.params.userId);
+			console.log('req.params.username: ' + req.params.username);
+			console.log('req.params.heroId: ' + req.params.heroId);
+			console.log(
+				'req.params.superheroName: ' + req.params.superheroName
+			);
+			const follow_id = await Hero.followHero(
+				req.params.userId,
+				req.params.username,
+				req.params.heroId,
+				req.params.superheroName
+			);
+			return res.json({ follow_id });
+		} catch (err) {
+			return next(err);
+		}
 	}
-});
+);
 router.get(
 	'/:userId/unfollow/hero/:heroId',
 	ensureCorrectUserId,

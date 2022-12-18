@@ -66,12 +66,12 @@ class BackendApi {
 	}
 
 	// follow a hero
-	static async followHero(userId, id, data) {
+	static async followHero(userId, username, id, superheroName, data) {
 		console.log(
-			'Inside static async followHero(userId, id, data) on backend-api.js'
+			'Inside static async followHero(userId, username, id, superheroName, data) on backend-api.js'
 		);
 		let res = await this.request(
-			`heroes/${userId}/follow/hero/${id}`,
+			`heroes/${userId}/follow/hero/${id}/${username}/${superheroName}`,
 			data,
 			'get'
 		);

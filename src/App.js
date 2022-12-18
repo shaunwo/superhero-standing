@@ -146,10 +146,27 @@ function App() {
 	}
 
 	// follow a hero - API call, and update set of FollowHeroIds
-	function followHero(id) {
+	async function followHero(id) {
 		if (hasFollowedHero(id)) return;
 		console.log('Inside function followHero(id) on App.js');
-		BackendApi.followHero(currentUser.user_id, id);
+		let heroResults = await SuperheroApi.getHero(id);
+		console.log(
+			'heroResults from inside followHero on App.js: ',
+			heroResults
+		);
+		let hero = heroResults.data.data;
+		console.log('hero from inside followHero on App.js: ', hero);
+		console.log(
+			'superheroName from inside followHero on App.js: ',
+			hero.name
+		);
+		let superheroName = hero.name;
+		await BackendApi.followHero(
+			currentUser.user_id,
+			currentUser.username,
+			id,
+			superheroName
+		);
 		setHeroFollowIds(new Set([...heroFollowIds, +id]));
 		console.log('heroAllUsersFollowedIds[id] - id value ONLY: ' + +id);
 		console.log(
@@ -160,10 +177,16 @@ function App() {
 			'heroAllUsersFollowedIds[id]: ',
 			currentUser.heroAllUsersFollowedIds[id]
 		);
-		setHeroAllUsersFollowedIds(
-			(currentUser.heroAllUsersFollowedIds[id] =
-				currentUser.heroAllUsersFollowedIds[id] + 1)
-		);
+		if (!currentUser.heroAllUsersFollowedIds[id]) {
+			setHeroAllUsersFollowedIds(
+				(currentUser.heroAllUsersFollowedIds[id] = 1)
+			);
+		} else {
+			setHeroAllUsersFollowedIds(
+				(currentUser.heroAllUsersFollowedIds[id] =
+					currentUser.heroAllUsersFollowedIds[id] + 1)
+			);
+		}
 	}
 	// UNfollow a hero - API call, and update set of FollowHeroIds
 	function unfollowHero(id) {

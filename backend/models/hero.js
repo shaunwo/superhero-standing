@@ -13,7 +13,9 @@ const {
 
 class Hero {
 	// follow/unfollow a hero
-	static async followHero(userId, heroId) {
+	static async followHero(userId, username, heroId, superheroName) {
+		console.log('user_id: ' + userId);
+		console.log('superhero_id: ' + heroId);
 		const followRes = await db.query(
 			`
 			INSERT INTO
@@ -34,8 +36,6 @@ class Hero {
 
 		if (!follow_id) throw new NotFoundError(`No follow: ${heroId}`);
 
-		const activityDescription = 'u|' + userId + ' followed h|' + heroId;
-
 		// adding to activity log
 		const followActivityRes = await db.query(
 			`
@@ -43,13 +43,16 @@ class Hero {
                recent_activity
           (
                user_id,
+			username,
+			superhero_id,
+			superhero_name,
                description
           )
           VALUES
-               ($1, $2)
+               ($1, $2, $3, $4, $5)
           RETURNING activity_id
           `,
-			[userId, activityDescription]
+			[userId, username, heroId, superheroName, 'liked']
 		);
 		const activity_id = followActivityRes.rows[0];
 
