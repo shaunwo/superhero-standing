@@ -87,6 +87,15 @@ router.get('/other/:id', ensureLoggedIn, async function(req, res, next) {
 		return next(err);
 	}
 });
+router.get('/activity/:id', ensureLoggedIn, async function(req, res, next) {
+	try {
+		const recentActivity = await User.getRecentActivity(req.params.id);
+		return res.json(recentActivity);
+	} catch (err) {
+		return next(err);
+	}
+});
+
 router.get(
 	'/follow/:connector_user_id/:connectee_user_id',
 	ensureLoggedIn,

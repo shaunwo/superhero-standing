@@ -3,11 +3,34 @@
 const db = require('../db');
 const bcrypt = require('bcrypt');
 const { sqlForPartialUpdate } = require('../helpers/sql');
+const cloudinary = require('cloudinary').v2;
 const {
 	NotFoundError,
 	BadRequestError,
 	UnauthorizedError,
 } = require('../expressError');
+
+/////////////////////////
+// Uploads an image file to Cloudinary
+/////////////////////////
+const uploadImage = async (imagePath) => {
+	// Use the uploaded file's name as the asset's public ID and
+	// allow overwriting the asset with new versions
+	const options = {
+		use_filename: true,
+		unique_filename: false,
+		overwrite: true,
+	};
+
+	try {
+		// Upload the image
+		const result = await cloudinary.uploader.upload(imagePath, options);
+		console.log(result);
+		return result.secure_url;
+	} catch (error) {
+		console.error(error);
+	}
+};
 
 /** Related functions for heroes. */
 
@@ -52,7 +75,7 @@ class Hero {
                ($1, $2, $3, $4, $5)
           RETURNING activity_id
           `,
-			[userId, username, heroId, superheroName, 'liked']
+			[userId, username, heroId, superheroName, 'followed']
 		);
 		const activity_id = followActivityRes.rows[0];
 
@@ -62,7 +85,7 @@ class Hero {
 		return follow_id;
 	}
 
-	static async unfollowHero(userId, heroId) {
+	static async unfollowHero(userId, username, heroId, superheroName) {
 		const unfollowRes = await db.query(
 			`
 			DELETE FROM
@@ -83,22 +106,23 @@ class Hero {
 
 		if (!follow_id) throw new NotFoundError(`No unfollow: ${heroId}`);
 
-		const activityDescription = 'u|' + userId + ' unfollowed h|' + heroId;
-
 		// adding to activity log
 		const unfollowActivityRes = await db.query(
 			`
           INSERT INTO
                recent_activity
-          (
-               user_id,
-               description
-          )
-          VALUES
-               ($1, $2)
-          RETURNING activity_id
-          `,
-			[userId, activityDescription]
+			(
+				user_id,
+				username,
+				superhero_id,
+				superhero_name,
+				description
+			)
+			VALUES
+				($1, $2, $3, $4, $5)
+			RETURNING activity_id
+			`,
+			[userId, username, heroId, superheroName, 'unfollowed']
 		);
 		const activity_id = unfollowActivityRes.rows[0];
 
@@ -109,7 +133,7 @@ class Hero {
 	}
 
 	// like/unlike a hero
-	static async likeHero(userId, heroId) {
+	static async likeHero(userId, username, heroId, superheroName) {
 		const likeRes = await db.query(
 			`
           INSERT INTO
@@ -129,22 +153,23 @@ class Hero {
 
 		if (!like_id) throw new NotFoundError(`No like: ${heroId}`);
 
-		const activityDescription = 'u|' + userId + ' liked h|' + heroId;
-
 		// adding to activity log
 		const likeActivityRes = await db.query(
 			`
           INSERT INTO
                recent_activity
-          (
-               user_id,
-               description
-          )
-          VALUES
-               ($1, $2)
-          RETURNING activity_id
-          `,
-			[userId, activityDescription]
+			(
+				user_id,
+				username,
+				superhero_id,
+				superhero_name,
+				description
+			)
+			VALUES
+				($1, $2, $3, $4, $5)
+			RETURNING activity_id
+			`,
+			[userId, username, heroId, superheroName, 'liked']
 		);
 		const activity_id = likeActivityRes.rows[0];
 
@@ -153,7 +178,7 @@ class Hero {
 
 		return like_id;
 	}
-	static async unlikeHero(userId, heroId) {
+	static async unlikeHero(userId, username, heroId, superheroName) {
 		const likeRes = await db.query(
 			`
           DELETE FROM
@@ -178,15 +203,18 @@ class Hero {
 			`
           INSERT INTO
                recent_activity
-          (
-               user_id,
-               description
-          )
-          VALUES
-               ($1, $2)
-          RETURNING activity_id
-          `,
-			[userId, activityDescription]
+			(
+				user_id,
+				username,
+				superhero_id,
+				superhero_name,
+				description
+			)
+			VALUES
+				($1, $2, $3, $4, $5)
+			RETURNING activity_id
+			`,
+			[userId, username, heroId, superheroName, 'unliked']
 		);
 		const activity_id = unlikeActivityRes.rows[0];
 
@@ -197,7 +225,13 @@ class Hero {
 	}
 
 	// comment on a hero
-	static async commentOnHero(userId, heroId, comments) {
+	static async commentOnHero(
+		userId,
+		username,
+		heroId,
+		superheroName,
+		comments
+	) {
 		const commentRes = await db.query(
 			`
 				INSERT INTO
@@ -219,23 +253,23 @@ class Hero {
 
 		if (!comment_id) throw new NotFoundError(`No comment: ${heroId}`);
 
-		const activityDescription =
-			'u|' + userId + ' commented on h|' + heroId;
-
 		// adding to activity log
 		const commentActivityRes = await db.query(
 			`
           INSERT INTO
                recent_activity
-          (
-               user_id,
-               description
-          )
-          VALUES
-               ($1, $2)
-          RETURNING activity_id
-          `,
-			[userId, activityDescription]
+			(
+				user_id,
+				username,
+				superhero_id,
+				superhero_name,
+				description
+			)
+			VALUES
+				($1, $2, $3, $4, $5)
+			RETURNING activity_id
+			`,
+			[userId, username, heroId, superheroName, 'commented on']
 		);
 		const activity_id = commentActivityRes.rows[0];
 
@@ -243,6 +277,64 @@ class Hero {
 			throw new NotFoundError(`No comment activity: ${heroId}`);
 
 		return comment_id;
+	}
+
+	// upload image for a hero
+	static async uploadHeroImage(
+		userId,
+		username,
+		heroId,
+		superheroName,
+		uploadFile
+	) {
+		// upload image through cloudinary
+		const secure_url = await uploadImage(uploadFile);
+		console.log('secure_url: ' + secure_url);
+		/* const uploadHeroImageRes = await db.query(
+			`
+				INSERT INTO
+					images
+				(
+					user_id,
+					superhero_id,
+					image_url,
+					active
+				)
+				VALUES
+					($1, $2, $3, TRUE)
+				RETURNING image_url
+				`,
+			[userId, heroId, image_url]
+		);
+		console.log('SQL result in backend > models > user.js: ', uploadHeroImageRes);
+		const upload_id = uploadHeroImageRes.rows[0];
+
+		if (!upload_id) throw new NotFoundError(`No comment: ${heroId}`);
+ */
+		// adding to activity log
+		const uploadActivityRes = await db.query(
+			`
+          INSERT INTO
+               recent_activity
+			(
+				user_id,
+				username,
+				superhero_id,
+				superhero_name,
+				description
+			)
+			VALUES
+				($1, $2, $3, $4, $5)
+			RETURNING activity_id
+			`,
+			[userId, username, heroId, superheroName, 'uploaded image for']
+		);
+		const activity_id = uploadActivityRes.rows[0];
+
+		if (!activity_id)
+			throw new NotFoundError(`No upload activity: ${heroId}`);
+
+		//return image_url;
 	}
 
 	// pull comments for a hero

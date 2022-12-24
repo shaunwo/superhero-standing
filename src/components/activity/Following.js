@@ -1,12 +1,14 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import UserContext from '../../private/auth/UserContext';
 import HeroFollowCard from './HeroFollowCard';
 import MortalFollowCard from './MortalFollowCard';
 import SuperheroApi from '../../private/api/superhero-api';
-//import axios from 'axios';
+import axios from 'axios';
 
 function Following() {
-	const { currentUser, heroFollowIds } = useContext(UserContext);
+	const { currentUser, heroFollowedIds } = useContext(UserContext);
+
+	const [heroData, setHeroData] = useState();
 
 	console.log('currentUser: ', currentUser);
 	console.log('heroFollowedIds: ', currentUser.heroFollowedIds);
@@ -16,18 +18,29 @@ function Following() {
 	);
 
 	async function findAllFollowedHeros() {
-		//let baseURL = 'http://localhost:3001/api/hero';
-		let heroData = await Promise.all([
-			currentUser.heroFollowedIds.map(
-				(h) => SuperheroApi.getHero(h)
-				//console.log(${baseURL}/${h})
-			),
-		]).then((result) => {
-			console.log(result);
+		let response = [];
+		const a = currentUser.heroFollowedIds.map((h) =>
+			SuperheroApi.getHero(h)
+		);
+		console.log(a);
+		await Promise.allSettled([a]).then((result) => {
+			result[0].value.forEach(async (result) => {
+				await result.then((val) => {
+					response.push(val.data);
+					if (response.length === a.length) {
+						console.log(response);
+						setHeroData(response);
+					}
+				});
+			});
 		});
-		console.log(heroData);
 	}
 	findAllFollowedHeros();
+	console.log('heroData: ', heroData);
+	console.log(
+		'pendingMortalFollowedIds: ',
+		currentUser.pendingMortalFollowedIds
+	);
 
 	return (
 		<>
@@ -57,7 +70,27 @@ function Following() {
 					</div>
 				</div>
 			) : (
-				<p>No superhero follows yet... what are you waiting for?</p>
+				<p>
+					No (approved) mere mortal follows yet... why not make
+					some friends on this app?
+				</p>
+			)}
+			{currentUser.pendingMortalFollowedIds &&
+			currentUser.pendingMortalFollowedIds.length ? (
+				<>
+					<h3>Pending</h3>
+					<div className="MortalFollows">
+						<div className="row row-cols-md-2 row-cols-lg-3 g-2 g-lg-3">
+							{currentUser.pendingMortalFollowedIds.map(
+								(n) => (
+									<MortalFollowCard user_id={n} />
+								)
+							)}
+						</div>
+					</div>
+				</>
+			) : (
+				''
 			)}
 		</>
 	);

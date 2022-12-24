@@ -18,6 +18,9 @@ function App() {
 	const [infoLoaded, setInfoLoaded] = useState(false);
 	const [heroFollowIds, setHeroFollowIds] = useState(new Set([]));
 	const [mortalFollowIds, setMortalFollowIds] = useState(new Set([]));
+	const [pendingMortalFollowIds, setPendingMortalFollowIds] = useState(
+		new Set([])
+	);
 	const [heroLikeIds, setHeroLikeIds] = useState(new Set([]));
 	const [heroAllUsersFollowedIds, setHeroAllUsersFollowedIds] = useState(
 		new Object({})
@@ -26,6 +29,9 @@ function App() {
 		new Object({})
 	);
 	const [heroAllUsersCommentsIds, setHeroAllUsersCommentsIds] = useState(
+		new Object({})
+	);
+	const [heroAllUsersUploadsIds, setHeroAllUsersUploadsIds] = useState(
 		new Object({})
 	);
 	const [currentUser, setCurrentUser] = useState(null);
@@ -75,8 +81,16 @@ function App() {
 								currentUser.heroAllUsersCommentsIds
 							)
 						);
+						setHeroAllUsersUploadsIds(
+							new Object(
+								currentUser.heroAllUsersUploadsIds
+							)
+						);
 						setMortalFollowIds(
 							new Set(currentUser.mortalFollowedIds)
+						);
+						setPendingMortalFollowIds(
+							new Set(currentUser.pendingMortalFollowedIds)
 						);
 					} catch (err) {
 						console.error(
@@ -89,7 +103,9 @@ function App() {
 						setHeroAllUsersFollowedIds(null);
 						setHeroAllUsersLikedIds(null);
 						setHeroAllUsersCommentsIds(null);
+						setHeroAllUsersUploadsIds(null);
 						setMortalFollowIds(null);
+						setPendingMortalFollowIds(null);
 					}
 				}
 				setInfoLoaded(true);
@@ -134,32 +150,22 @@ function App() {
 
 	// checks to see if a hero has been followed, yet
 	function hasFollowedHero(id) {
-		console.log('hasFollowedHero' + id);
+		console.log('hasFollowedHero: ' + id);
 		console.log('heroFollowIds: ', heroFollowIds);
 		return heroFollowIds.has(+id);
 	}
 	// checks to see if a hero has been liked, yet
 	function hasLikedHero(id) {
-		console.log('hasLikedHero' + id);
+		console.log('hasLikedHero: ' + id);
 		console.log('heroLikeIds: ', heroLikeIds);
 		return heroLikeIds.has(+id);
 	}
 
-	// follow a hero - API call, and update set of FollowHeroIds
+	// follow a hero - API call, and update sets of FollowHeroIds
 	async function followHero(id) {
 		if (hasFollowedHero(id)) return;
-		console.log('Inside function followHero(id) on App.js');
 		let heroResults = await SuperheroApi.getHero(id);
-		console.log(
-			'heroResults from inside followHero on App.js: ',
-			heroResults
-		);
 		let hero = heroResults.data.data;
-		console.log('hero from inside followHero on App.js: ', hero);
-		console.log(
-			'superheroName from inside followHero on App.js: ',
-			hero.name
-		);
 		let superheroName = hero.name;
 		await BackendApi.followHero(
 			currentUser.user_id,
@@ -168,15 +174,6 @@ function App() {
 			superheroName
 		);
 		setHeroFollowIds(new Set([...heroFollowIds, +id]));
-		console.log('heroAllUsersFollowedIds[id] - id value ONLY: ' + +id);
-		console.log(
-			'heroAllUsersFollowedIds: ',
-			currentUser.heroAllUsersFollowedIds
-		);
-		console.log(
-			'heroAllUsersFollowedIds[id]: ',
-			currentUser.heroAllUsersFollowedIds[id]
-		);
 		if (!currentUser.heroAllUsersFollowedIds[id]) {
 			setHeroAllUsersFollowedIds(
 				(currentUser.heroAllUsersFollowedIds[id] = 1)
@@ -188,11 +185,18 @@ function App() {
 			);
 		}
 	}
-	// UNfollow a hero - API call, and update set of FollowHeroIds
-	function unfollowHero(id) {
+	// UNfollow a hero - API call, and update sets of FollowHeroIds
+	async function unfollowHero(id) {
 		if (!hasFollowedHero(id)) return;
-		console.log('Inside function unfollowHero(id) on App.js');
-		BackendApi.unfollowHero(currentUser.user_id, id);
+		let heroResults = await SuperheroApi.getHero(id);
+		let hero = heroResults.data.data;
+		let superheroName = hero.name;
+		await BackendApi.unfollowHero(
+			currentUser.user_id,
+			currentUser.username,
+			id,
+			superheroName
+		);
 		setHeroFollowIds(new Set([heroFollowIds.delete(id)]));
 		setHeroAllUsersFollowedIds(
 			(currentUser.heroAllUsersFollowedIds[id] =
@@ -200,22 +204,42 @@ function App() {
 		);
 	}
 
-	// like a hero - API call, and update set of LikeHeroIds
-	function likeHero(id) {
+	// like a hero - API call, and update sets of LikeHeroIds
+	async function likeHero(id) {
 		if (hasLikedHero(id)) return;
-		console.log('Inside function likeHero(id) on App.js');
-		BackendApi.likeHero(currentUser.user_id, id);
-		setHeroLikeIds(new Set([...heroLikeIds, +id]));
-		setHeroAllUsersLikedIds(
-			(currentUser.heroAllUsersLikedIds[id] =
-				currentUser.heroAllUsersLikedIds[id] + 1)
+		let heroResults = await SuperheroApi.getHero(id);
+		let hero = heroResults.data.data;
+		let superheroName = hero.name;
+		await BackendApi.likeHero(
+			currentUser.user_id,
+			currentUser.username,
+			id,
+			superheroName
 		);
+		setHeroLikeIds(new Set([...heroLikeIds, +id]));
+		if (!currentUser.heroAllUsersLikedIds[id]) {
+			setHeroAllUsersLikedIds(
+				(currentUser.heroAllUsersLikedIds[id] = 1)
+			);
+		} else {
+			setHeroAllUsersLikedIds(
+				(currentUser.heroAllUsersLikedIds[id] =
+					currentUser.heroAllUsersLikedIds[id] + 1)
+			);
+		}
 	}
 	// UNlike a hero - API call, and update set of LikeHeroIds
-	function unlikeHero(id) {
+	async function unlikeHero(id) {
 		if (!hasLikedHero(id)) return;
-		console.log('Inside function unlikeHero(id) on App.js');
-		BackendApi.unlikeHero(currentUser.user_id, id);
+		let heroResults = await SuperheroApi.getHero(id);
+		let hero = heroResults.data.data;
+		let superheroName = hero.name;
+		await BackendApi.unlikeHero(
+			currentUser.user_id,
+			currentUser.username,
+			id,
+			superheroName
+		);
 		setHeroLikeIds(new Set([heroLikeIds.delete(id)]));
 		setHeroAllUsersLikedIds(
 			(currentUser.heroAllUsersLikedIds[id] =
@@ -223,17 +247,52 @@ function App() {
 		);
 	}
 
-	// comment on a hero - API call, and update set of LikeHeroIds
-	function commentOnHero(commentData, id) {
-		console.log('commentData: ', commentData);
-		const { comments } = commentData;
-		console.log('comments: ', comments);
-		console.log('Inside function commentOnHero(id) on App.js');
-		BackendApi.commentOnHero(currentUser.user_id, id, commentData);
-		setHeroAllUsersCommentsIds(
-			(currentUser.heroAllUsersCommentsIds[id] =
-				currentUser.heroAllUsersCommentsIds[id] + 1)
+	// comment on a hero - API call, and update set of heroAllUsersCommentsIds
+	async function commentOnHero(commentData, id) {
+		let heroResults = await SuperheroApi.getHero(id);
+		let hero = heroResults.data.data;
+		let superheroName = hero.name;
+		await BackendApi.commentOnHero(
+			currentUser.user_id,
+			currentUser.username,
+			id,
+			superheroName,
+			commentData
 		);
+		if (!currentUser.heroAllUsersCommentsIds[id]) {
+			setHeroAllUsersCommentsIds(
+				(currentUser.heroAllUsersCommentsIds[id] = 1)
+			);
+		} else {
+			setHeroAllUsersCommentsIds(
+				(currentUser.heroAllUsersCommentsIds[id] =
+					currentUser.heroAllUsersCommentsIds[id] + 1)
+			);
+		}
+	}
+	// upload an image for a hero - API call, and update set of heroAllUsersCommentsIds
+	async function uploadHeroImage(uploadFormData, id) {
+		let heroResults = await SuperheroApi.getHero(id);
+		let hero = heroResults.data.data;
+		let superheroName = hero.name;
+		console.log('uploadFormData: ', uploadFormData);
+		await BackendApi.uploadHeroImage(
+			currentUser.user_id,
+			currentUser.username,
+			id,
+			superheroName,
+			uploadFormData
+		);
+		/*if (!currentUser.heroAllUsersUploadsIds[id]) {
+			setHeroAllUsersUploadsIds(
+				(currentUser.heroAllUsersUploadsIds[id] = 1)
+			);
+		} else {
+			setHeroAllUsersUploadsIds(
+				(currentUser.heroAllUsersUploadsIds[id] =
+					currentUser.heroAllUsersUploadsIds[id] + 1)
+			);
+		}*/
 	}
 
 	// follow a mortal - API call, and update set of FollowMortalIds
@@ -245,10 +304,16 @@ function App() {
 	}
 	// unfollow a mortal - API call, and update set of FollowMortalIds
 	function unfollowMortal(id) {
-		//if (!hasFollowedHero(id)) return;
 		console.log('Inside function unfollowMortal(id) on App.js');
 		BackendApi.unfollowMortal(currentUser.user_id, id);
-		setMortalFollowIds(new Set([mortalFollowIds.delete(id)]));
+		if (mortalFollowIds && mortalFollowIds[id]) {
+			setMortalFollowIds(new Set([mortalFollowIds.delete(id)]));
+		} else if (pendingMortalFollowIds && pendingMortalFollowIds[id]) {
+			setPendingMortalFollowIds(
+				new Set([pendingMortalFollowIds.delete(id)])
+			);
+		}
+		console.log('pendingMortalFollowIds: ', pendingMortalFollowIds);
 	}
 	// checks to see if a hero has been followed, yet
 	function hasFollowedMortal(id) {
@@ -273,12 +338,14 @@ function App() {
 					likeHero,
 					unlikeHero,
 					commentOnHero,
+					uploadHeroImage,
 					hasFollowedMortal,
 					followMortal,
 					unfollowMortal,
 					heroAllUsersFollowedIds,
 					heroAllUsersLikedIds,
 					heroAllUsersCommentsIds,
+					heroAllUsersUploadsIds,
 				}}
 			>
 				<div className="App" id="wrapper">

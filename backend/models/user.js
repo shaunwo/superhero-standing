@@ -253,7 +253,7 @@ class User {
 		}
 		user.heroAllUsersCommentsIds = heroAllUsersCommentsIds;
 
-		// looking for this user's mortal followings
+		// looking for this user's APPROVED mortal followings
 		const userMortalFollowsRes = await db.query(
 			`
 			SELECT
@@ -262,12 +262,33 @@ class User {
 			 	user_connections AS u
 			WHERE
 			 	u.connector_user_id = $1
+					AND
+				u.active=TRUE
 			 `,
 			[user.user_id]
 		);
 
 		user.mortalFollowedIds = userMortalFollowsRes.rows.map(
 			(f) => f.connectee_user_id
+		);
+
+		// looking for this user's PENDING mortal followings
+		const userPendingMortalFollowsRes = await db.query(
+			`
+			SELECT
+				u.connectee_user_id
+			FROM
+			 	user_connections AS u
+			WHERE
+			 	u.connector_user_id = $1
+					AND
+				u.active=FALSE
+			 `,
+			[user.user_id]
+		);
+
+		user.pendingMortalFollowedIds = userPendingMortalFollowsRes.rows.map(
+			(g) => g.connectee_user_id
 		);
 
 		return user;
@@ -335,6 +356,29 @@ class User {
 		return user;
 	}
 
+	static async getRecentActivity(id) {
+		const recentActivityRes = await db.query(
+			`
+			SELECT 
+				*,
+				to_char(created_dt, 'DD/MM/YYY') AS formated_created_dt
+           	FROM
+				recent_activity
+           	WHERE
+				user_id = $1
+			ORDER BY
+				created_dt DESC
+			`,
+			[id]
+		);
+
+		const recentActivity = recentActivityRes.rows;
+
+		if (!recentActivity)
+			throw new NotFoundError(`No recent actvity: ${id}`);
+
+		return recentActivity;
+	}
 	/** Update user data with `data`.
 	 *
 	 * This is a "partial update" --- it's fine if data doesn't contain
@@ -413,7 +457,7 @@ class User {
 					status,
 					active)
 			VALUES
-				($1, $2, 0, TRUE)
+				($1, $2, 0, FALSE)
 			RETURNING
 				connection_id
 				`,

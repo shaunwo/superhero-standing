@@ -15,10 +15,12 @@
 .card {
 	margin-bottom: 10px;
 }
-.commentsBox {
+.commentsBox,
+.uploadBox {
 	padding: 10px 0;
 }
-.commentsBox button {
+.commentsBox button,
+.uploadBox button {
 	display: block;
 	clear: both;
 	margin-top: 3px;

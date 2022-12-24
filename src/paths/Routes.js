@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Home from '../components/Home';
+import ImageTest from '../ImageTest';
 import Search from '../components/search/Search';
 import HeroDetail from '../components/search/HeroDetail';
 import Following from '../components/activity/Following';
@@ -66,6 +67,11 @@ function Paths({ login, signup }) {
 						exact
 						path="/profile/:id"
 						element={<ProfileView />}
+					/>
+					<Route
+						exact
+						path="/imagetest"
+						element={<ImageTest />}
 					/>
 				</Route>
 				<Route path="*" element={<Navigate to="/" replace />} />

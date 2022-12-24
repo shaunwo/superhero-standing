@@ -29,6 +29,7 @@ function SearchCard({
 		likeHero,
 		unlikeHero,
 		commentOnHero,
+		uploadHeroImage,
 	} = useContext(UserContext);
 	const [followed, setFollowed] = useState();
 	const [liked, setLiked] = useState();
@@ -38,6 +39,8 @@ function SearchCard({
 	const [commentFormData, setCommentFormData] = useState({
 		comments: '',
 	});
+	const [uploadFormData, setUploadFormData] = useState();
+	const [image, setImage] = useState('');
 
 	React.useEffect(
 		function updateFollowedStatus() {
@@ -68,14 +71,12 @@ function SearchCard({
 
 		// followHero is a method within the SuperheroApi class
 		followHero(id);
-		setFollowed(true);
 	}
 	async function handleUnfollow(evt) {
 		if (!hasFollowedHero(id)) return;
 
 		// followHero is a method within the SuperheroApi class
 		unfollowHero(id);
-		setFollowed(false);
 	}
 
 	// like/unlike a hero
@@ -84,14 +85,12 @@ function SearchCard({
 
 		// likeHero is a method within the SuperheroApi class
 		likeHero(id);
-		setLiked(true);
 	}
 	async function handleUnlike(evt) {
 		if (!hasLikedHero(id)) return;
 
 		// likeHero is a method within the SuperheroApi class
 		unlikeHero(id);
-		setLiked(false);
 	}
 
 	// add comment for a hero
@@ -101,17 +100,39 @@ function SearchCard({
 		commentOnHero(commentFormData, id);
 		clearAndHideComments(id);
 	}
-
 	function clearAndHideComments(id) {
 		document.getElementById('comments.' + id).value = '';
-		document.getElementById('comments.' + id).className =
+		document.getElementById('commentsArea.' + id).className =
 			'commentsBox collapse';
 	}
 
+	// uploading image for a hero
+	function handleUpload(e) {
+		e.preventDefault();
+		console.log('e.target.heroImage: ', e.target.files);
+		setImage(e.target.files[0]);
+		//uploadFormData.append('image', image);
+		console.log('image from state: ' + image);
+		console.log(uploadFormData);
+		// uploadHeroImage is a method within the SuperheroApi class
+		//uploadHeroImage(uploadFormData, id);
+		//clearAndHideUpload(id);
+	}
+	function clearAndHideUpload(id) {
+		document.getElementById('upload.' + id).value = '';
+		document.getElementById('uploadArea.' + id).className =
+			'uploadBox collapse';
+	}
+
 	// updating the comment form fields
-	function handleChange(evt) {
+	function handleCommentChange(evt) {
 		const { name, value } = evt.target;
 		setCommentFormData((l) => ({ ...l, [name]: value }));
+	}
+	// updating the upload form fields
+	function handleUploadChange(evt) {
+		const { name, value } = evt.target;
+		setUploadFormData((l) => ({ ...l, [name]: value }));
 	}
 
 	console.log('followed: ', followed);
@@ -148,6 +169,7 @@ function SearchCard({
 					/>
 				)}
 				<h2 className="card-title">{name}</h2>
+				<p>ID: {id}</p>
 				<h3>Powerstats</h3>
 				<ul>
 					<li>Intelligence: {intelligence}</li>
@@ -169,7 +191,7 @@ function SearchCard({
 				</p>
 			</div>
 			<div className="card-footer">
-				{followed && (
+				{hasFollowedHero(id) && (
 					<a title={`Unfollow ${name}`} onClick={handleUnfollow}>
 						<img
 							src="/img/unfollow-icon.png"
@@ -177,7 +199,7 @@ function SearchCard({
 						/>
 					</a>
 				)}
-				{!followed && (
+				{!hasFollowedHero(id) && (
 					<a title={`Follow ${name}`} onClick={handleFollow}>
 						<img src="/img/follow-icon.png" alt="Follow" />
 					</a>
@@ -188,12 +210,12 @@ function SearchCard({
 				>
 					{heroAllUsersFollowedCount}
 				</span>
-				{liked && (
+				{hasLikedHero(id) && (
 					<a title={`Unlike ${name}`} onClick={handleUnlike}>
 						<img src="/img/unlike-icon.png" alt="Unlike" />
 					</a>
 				)}
-				{!liked && (
+				{!hasLikedHero(id) && (
 					<a title={`Like ${name}`} onClick={handleLike}>
 						<img src="/img/like-icon.png" alt="Like" />
 					</a>
@@ -219,7 +241,7 @@ function SearchCard({
 				</span>
 				<a
 					data-toggle="collapse"
-					href={`#upload.${id}`}
+					href={`#uploadArea.${id}`}
 					title={`Upload YOUR Image for ${name}`}
 				>
 					<img
@@ -236,10 +258,10 @@ function SearchCard({
 						<textarea
 							name="comments"
 							value={commentFormData.comments}
-							onChange={handleChange}
+							onChange={handleCommentChange}
 							rows="3"
 							cols="70"
-							className="commentsTextArea"
+							className="form-control"
 							id={`comments.${id}`}
 						/>
 						<button
@@ -250,8 +272,17 @@ function SearchCard({
 						</button>
 					</form>
 				</div>
-				<div className="collapse" id={`upload.${id}`}>
-					<input type="file" id="myFile" name="filename" />
+				<div className="collapse uploadBox" id={`uploadArea.${id}`}>
+					<input
+						type="file"
+						id={`upload.${id}`}
+						onChange={handleUpload}
+						name="file"
+						className="form-control"
+					/>
+					<button className="btn btn-sm btn-primary">
+						Upload Image
+					</button>
 				</div>
 			</div>
 		</div>

@@ -135,17 +135,6 @@ function HeroDetail() {
 		setCommentFormData((l) => ({ ...l, [name]: value }));
 	}
 
-	console.log('followed: ', followed);
-	console.log('allUsersFollowed: ', allUsersFollowed);
-	console.log(
-		'heroAllUsersFollowedIds: ',
-		currentUser.heroAllUsersFollowedIds
-	);
-	console.log(
-		'heroAllUsersCommentsIds: ',
-		currentUser.heroAllUsersCommentsIds
-	);
-
 	// pulling comments for the hero
 	useEffect(
 		function getHeroComments() {
@@ -168,8 +157,6 @@ function HeroDetail() {
 		},
 		[id]
 	);
-
-	console.log('heroComments: ', heroComments);
 
 	// displaying the spinner until the API call returns the heroes data
 	if (!hero) return <LoadingSpinner />;

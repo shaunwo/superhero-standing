@@ -19,6 +19,7 @@ function ProfileView() {
 	const [otherUser, setOtherUser] = useState(null);
 	const [followedMortal, setFollowedMortal] = useState();
 	const [unfollowedMortal, setUnfollowedMortal] = useState();
+	const [recentActivity, setRecentActivity] = useState();
 
 	useEffect(
 		function updateFollowedMortalStatus() {
@@ -55,6 +56,29 @@ function ProfileView() {
 		[id]
 	);
 
+	// pulling recent activity for the user
+	useEffect(
+		function getRecentActivity() {
+			async function getRecentActivity() {
+				try {
+					let recentActivityRes = await BackendApi.getRecentActivity(
+						id
+					);
+					let recentActivity = recentActivityRes;
+					console.log('recentActivity: ', recentActivity);
+					setRecentActivity(recentActivity);
+				} catch (err) {
+					console.error(
+						'App getRecentActivityAPI: problem loading',
+						err
+					);
+				}
+			}
+			getRecentActivity();
+		},
+		[id]
+	);
+
 	// follow/unfollow a hero
 	function handleFollowMortal(evt) {
 		evt.preventDefault();
@@ -73,6 +97,7 @@ function ProfileView() {
 		setFollowedMortal(false);
 	}
 
+	console.log('recentActivity: ', recentActivity);
 	return (
 		<>
 			<h1>Profile View</h1>
@@ -102,7 +127,7 @@ function ProfileView() {
 						<br />
 						{otherUser['bio']}
 					</p>
-					<h3>Activity on Superhero Standing</h3>
+					<h3>Stats on Superhero Standing</h3>
 					<ul>
 						<li>
 							Superhero Follows:
@@ -115,6 +140,32 @@ function ProfileView() {
 						</li>
 						<li>Superhero Comments: TBD</li>
 					</ul>
+					<h3>Recent Activity</h3>
+					{recentActivity && recentActivity.length ? (
+						<div className="RecentActivity">
+							{recentActivity.map((a) => (
+								<div>
+									{otherUser['username'] !==
+									currentUser.username
+										? a.username
+										: `YOU`}{' '}
+									{a.description}{' '}
+									<a
+										href={`/search/${a.superhero_id}`}
+										title={`More details on ${a.superhero_name}`}
+									>
+										{a.superhero_name}
+									</a>{' '}
+									on {a.created_dt}
+								</div>
+							))}
+						</div>
+					) : (
+						<p>
+							No recent actity on the site, yet. Why not DO
+							SOMETHING today?
+						</p>
+					)}
 					{otherUser['username'] !== currentUser.username && (
 						<>
 							{!followedMortal && (

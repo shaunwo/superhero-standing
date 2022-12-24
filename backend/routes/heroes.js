@@ -16,17 +16,7 @@ router.get(
 	'/:userId/follow/hero/:heroId/:username/:superheroName',
 	ensureCorrectUserId,
 	async function(req, res, next) {
-		console.log(
-			'Inside backend > routes > user.js: ... /:userId/follow/hero/:heroId/:username/:superheroName'
-		);
 		try {
-			console.log('Inside backend > routes > user.js: ');
-			console.log('req.params.userId: ' + req.params.userId);
-			console.log('req.params.username: ' + req.params.username);
-			console.log('req.params.heroId: ' + req.params.heroId);
-			console.log(
-				'req.params.superheroName: ' + req.params.superheroName
-			);
 			const follow_id = await Hero.followHero(
 				req.params.userId,
 				req.params.username,
@@ -40,17 +30,16 @@ router.get(
 	}
 );
 router.get(
-	'/:userId/unfollow/hero/:heroId',
+	'/:userId/unfollow/hero/:heroId/:username/:superheroName',
 	ensureCorrectUserId,
 	async function(req, res, next) {
-		console.log(
-			'Inside backend > routes > user.js: ... /:userId/unfollow/hero/:heroId'
-		);
 		try {
 			console.log('Inside backend > routes > user.js: ');
 			const follow_id = await Hero.unfollowHero(
 				req.params.userId,
-				req.params.heroId
+				req.params.username,
+				req.params.heroId,
+				req.params.superheroName
 			);
 			return res.json({ follow_id });
 		} catch (err) {
@@ -59,60 +48,74 @@ router.get(
 	}
 );
 
-router.get('/:userId/like/hero/:heroId', ensureCorrectUserId, async function(
-	req,
-	res,
-	next
-) {
-	console.log(
-		'Inside backend > routes > user.js: ... /:userId/like/hero/:heroId'
-	);
-	try {
-		console.log('Inside backend > routes > user.js: ');
-		const like_id = await Hero.likeHero(
-			req.params.userId,
-			req.params.heroId
-		);
-		return res.json({ like_id });
-	} catch (err) {
-		return next(err);
-	}
-});
-router.get('/:userId/unlike/hero/:heroId', ensureCorrectUserId, async function(
-	req,
-	res,
-	next
-) {
-	console.log(
-		'Inside backend > routes > user.js: ... /:userId/unlike/hero/:heroId'
-	);
-	try {
-		console.log('Inside backend > routes > user.js: ');
-		const like_id = await Hero.unlikeHero(
-			req.params.userId,
-			req.params.heroId
-		);
-		return res.json({ like_id });
-	} catch (err) {
-		return next(err);
-	}
-});
-
-router.post(
-	'/:userId/comment/hero/:heroId',
+router.get(
+	'/:userId/like/hero/:heroId/:username/:superheroName',
 	ensureCorrectUserId,
 	async function(req, res, next) {
-		console.log(
-			'Inside backend > routes > user.js: ... /:userId/comment/hero/:heroId'
-		);
 		try {
 			console.log('Inside backend > routes > user.js: ');
+			const like_id = await Hero.likeHero(
+				req.params.userId,
+				req.params.username,
+				req.params.heroId,
+				req.params.superheroName
+			);
+			return res.json({ like_id });
+		} catch (err) {
+			return next(err);
+		}
+	}
+);
+router.get(
+	'/:userId/unlike/hero/:heroId/:username/:superheroName',
+	ensureCorrectUserId,
+	async function(req, res, next) {
+		try {
+			console.log('Inside backend > routes > user.js: ');
+			const like_id = await Hero.unlikeHero(
+				req.params.userId,
+				req.params.username,
+				req.params.heroId,
+				req.params.superheroName
+			);
+			return res.json({ like_id });
+		} catch (err) {
+			return next(err);
+		}
+	}
+);
+
+router.post(
+	'/:userId/comment/hero/:heroId/:username/:superheroName',
+	ensureCorrectUserId,
+	async function(req, res, next) {
+		try {
 			const { comments } = req.body;
-			console.log('comments: ', comments);
 			const comment_id = await Hero.commentOnHero(
 				req.params.userId,
+				req.params.username,
 				req.params.heroId,
+				req.params.superheroName,
 				comments
+			);
+			return res.json({ comment_id });
+		} catch (err) {
+			return next(err);
+		}
+	}
+);
+router.post(
+	'/:userId/upload/hero/:heroId/:username/:superheroName',
+	ensureCorrectUserId,
+	async function(req, res, next) {
+		try {
+			const { upload } = req.body;
+			const comment_id = await Hero.uploadHeroImage(
+				req.params.userId,
+				req.params.username,
+				req.params.heroId,
+				req.params.superheroName,
+				upload
 			);
 			return res.json({ comment_id });
 		} catch (err) {
