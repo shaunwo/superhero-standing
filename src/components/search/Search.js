@@ -35,7 +35,7 @@ function Search() {
 			'Sorry, no results were found. Please try another search to find your favorite superhero!';
 	}
 
-	// displaying the spinner until the API call returns the companies data
+	// displaying the spinner until the API call returns the heros data
 	//if (!heros) return <LoadingSpinner />;
 
 	return (

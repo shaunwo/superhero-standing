@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import UserContext from '../../private/auth/UserContext';
 import './HeroSearchCard.css';
 
@@ -29,12 +29,12 @@ function SearchCard({
 		likeHero,
 		unlikeHero,
 		commentOnHero,
+		heroFollowIds,
 		uploadHeroImage,
 	} = useContext(UserContext);
 	const [followed, setFollowed] = useState();
 	const [liked, setLiked] = useState();
 	const [allUsersFollowed, setAllUsersFollowed] = useState();
-	const [allUsersLiked, setAllUsersLiked] = useState();
 
 	const [commentFormData, setCommentFormData] = useState({
 		comments: '',
@@ -42,25 +42,17 @@ function SearchCard({
 	const [uploadFormData, setUploadFormData] = useState();
 	const [image, setImage] = useState('');
 
-	React.useEffect(
+	useEffect(
 		function updateFollowedStatus() {
-			console.log(
-				'HeroCard useEffect updateFollowedStatus',
-				'id=',
-				id
-			);
-			console.log('inside React.useEffect id: ' + id);
 			setFollowed(hasFollowedHero(id));
-			console.log(hasFollowedHero(id));
+			//console.log(hasFollowedHero(id));
 		},
 		[id, hasFollowedHero]
 	);
-	React.useEffect(
+	useEffect(
 		function updateLikedStatus() {
-			console.log('HeroCard useEffect updateLikedStatus', 'id=', id);
-			console.log('inside React.useEffect id: ' + id);
 			setLiked(hasLikedHero(id));
-			console.log(hasLikedHero(id));
+			//console.log(hasLikedHero(id));
 		},
 		[id, hasLikedHero]
 	);
@@ -89,7 +81,7 @@ function SearchCard({
 	async function handleUnlike(evt) {
 		if (!hasLikedHero(id)) return;
 
-		// likeHero is a method within the SuperheroApi class
+		// unlikeHero is a method within the SuperheroApi class
 		unlikeHero(id);
 	}
 
@@ -135,6 +127,7 @@ function SearchCard({
 		setUploadFormData((l) => ({ ...l, [name]: value }));
 	}
 
+	console.log('heroFollowIds: ', heroFollowIds);
 	console.log('followed: ', followed);
 	console.log('allUsersFollowed: ', allUsersFollowed);
 	console.log(
@@ -179,16 +172,6 @@ function SearchCard({
 					<li>Power: {power}</li>
 					<li>Combat: {combat}</li>
 				</ul>
-				<p>
-					<small>
-						<a
-							href={`/search/${id}`}
-							title={`More details on ${name}`}
-						>
-							More Details
-						</a>
-					</small>
-				</p>
 			</div>
 			<div className="card-footer">
 				{hasFollowedHero(id) && (
@@ -250,6 +233,10 @@ function SearchCard({
 					/>
 				</a>
 				<span className="activity-counter">NumImages</span>
+				<a href={`/search/${id}`} title={`More details on ${name}`}>
+					More Details
+				</a>
+
 				<div
 					className="collapse commentsBox"
 					id={`commentsArea.${id}`}

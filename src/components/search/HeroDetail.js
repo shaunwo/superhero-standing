@@ -43,12 +43,6 @@ function HeroDetail() {
 
 	useEffect(
 		function updateFollowedStatus() {
-			console.log(
-				'HeroCard useEffect updateFollowedStatus',
-				'id=',
-				id
-			);
-			console.log('inside React.useEffect id: ' + id);
 			setFollowed(hasFollowedHero(id));
 			console.log(hasFollowedHero(id));
 		},
@@ -56,8 +50,6 @@ function HeroDetail() {
 	);
 	useEffect(
 		function updateLikedStatus() {
-			console.log('HeroCard useEffect updateLikedStatus', 'id=', id);
-			console.log('inside React.useEffect id: ' + id);
 			setLiked(hasLikedHero(id));
 			console.log(hasLikedHero(id));
 		},

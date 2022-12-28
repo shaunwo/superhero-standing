@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import useLocalStorage from './hooks/useLocalStorage';
 import Navigation from './paths/Navigation';
+//import { Flasher } from 'react-universal-flash';
+//import Message from './components/common/Message';
 import Paths from './paths/Routes';
 import './App.css';
 
@@ -21,7 +23,7 @@ function App() {
 	const [pendingMortalFollowIds, setPendingMortalFollowIds] = useState(
 		new Set([])
 	);
-	const [heroLikeIds, setHeroLikeIds] = useState(new Set([]));
+	const [heroLikeIds, setHeroLikeIds] = useState();
 	const [heroAllUsersFollowedIds, setHeroAllUsersFollowedIds] = useState(
 		new Object({})
 	);
@@ -197,7 +199,9 @@ function App() {
 			id,
 			superheroName
 		);
-		setHeroFollowIds(new Set([heroFollowIds.delete(id)]));
+		console.log('heroFollowIds in App.js BEFORE: ', heroFollowIds);
+		setHeroFollowIds(new Set([heroFollowIds.delete(+id)]));
+		console.log('heroFollowIds in App.js AFTER: ', heroFollowIds);
 		setHeroAllUsersFollowedIds(
 			(currentUser.heroAllUsersFollowedIds[id] =
 				currentUser.heroAllUsersFollowedIds[id] - 1)
@@ -240,7 +244,9 @@ function App() {
 			id,
 			superheroName
 		);
-		setHeroLikeIds(new Set([heroLikeIds.delete(id)]));
+		console.log('heroLikeIds in App.js: ', heroLikeIds);
+		let newHeroLikeIdsSet = new Set([heroLikeIds.delete(id)]);
+		setHeroLikeIds(newHeroLikeIdsSet);
 		setHeroAllUsersLikedIds(
 			(currentUser.heroAllUsersLikedIds[id] =
 				currentUser.heroAllUsersLikedIds[id] - 1)
@@ -342,6 +348,8 @@ function App() {
 					hasFollowedMortal,
 					followMortal,
 					unfollowMortal,
+					heroFollowIds,
+					heroLikeIds,
 					heroAllUsersFollowedIds,
 					heroAllUsersLikedIds,
 					heroAllUsersCommentsIds,

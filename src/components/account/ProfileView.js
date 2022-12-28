@@ -18,21 +18,15 @@ function ProfileView() {
 
 	const [otherUser, setOtherUser] = useState(null);
 	const [followedMortal, setFollowedMortal] = useState();
-	const [unfollowedMortal, setUnfollowedMortal] = useState();
 	const [recentActivity, setRecentActivity] = useState();
 
+	// updating the follow status for
 	useEffect(
 		function updateFollowedMortalStatus() {
-			console.log(
-				'HeroCard useEffect updateFollowedMortalStatus',
-				'id=',
-				id
-			);
-			console.log('inside React.useEffect id: ' + id);
 			setFollowedMortal(hasFollowedMortal(id));
 			console.log(hasFollowedMortal(id));
 		},
-		[id, hasFollowedMortal]
+		[hasFollowedMortal]
 	);
 
 	// pulling the other user info from API
@@ -98,6 +92,7 @@ function ProfileView() {
 	}
 
 	console.log('recentActivity: ', recentActivity);
+	console.log('followedMortal: ' + followedMortal);
 	return (
 		<>
 			<h1>Profile View</h1>

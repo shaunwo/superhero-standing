@@ -1,58 +1,93 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import UserContext from '../../private/auth/UserContext';
 import HeroFollowCard from './HeroFollowCard';
 import MortalFollowCard from './MortalFollowCard';
 import SuperheroApi from '../../private/api/superhero-api';
-import axios from 'axios';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 function Following() {
-	const { currentUser, heroFollowedIds } = useContext(UserContext);
+	const { currentUser, heroFollowIds } = useContext(UserContext);
 
 	const [heroData, setHeroData] = useState();
 
 	console.log('currentUser: ', currentUser);
-	console.log('heroFollowedIds: ', currentUser.heroFollowedIds);
+	const heroFollowArray = [...heroFollowIds];
+	console.log('heroFollowIds: ', heroFollowIds);
+	console.log('heroFollowArray: ', heroFollowArray);
 
-	currentUser.heroFollowedIds.map((h) =>
-		console.log('heroFollowedId: ' + h)
-	);
+	heroFollowArray.map((h) => console.log('heroFollowIds: ' + h));
 
-	async function findAllFollowedHeros() {
-		let response = [];
-		const a = currentUser.heroFollowedIds.map((h) =>
-			SuperheroApi.getHero(h)
-		);
-		console.log(a);
-		await Promise.allSettled([a]).then((result) => {
-			result[0].value.forEach(async (result) => {
-				await result.then((val) => {
-					response.push(val.data);
-					if (response.length === a.length) {
-						console.log(response);
-						setHeroData(response);
-					}
+	useEffect(
+		function findAllFollowedHeros() {
+			let response = [];
+			const a = heroFollowArray
+				.sort()
+				.map((h) => SuperheroApi.getHero(h));
+			console.log(a);
+			Promise.allSettled([a]).then((result) => {
+				result[0].value.forEach(async (result) => {
+					await result.then((val) => {
+						response.push(val.data);
+						if (response.length === a.length) {
+							console.log(response);
+							setHeroData(response);
+						}
+					});
 				});
 			});
-		});
+		},
+		[heroFollowIds]
+	);
+
+	function sortHerosByName(a, b) {
+		if (a.data.name < b.data.name) {
+			return -1;
+		}
+		if (a.data.name > b.data.name) {
+			return 1;
+		}
+		return 0;
 	}
-	findAllFollowedHeros();
+
+	let sortedHeroData = [];
+	if (heroData) {
+		sortedHeroData = heroData.sort(sortHerosByName);
+		console.log('sortedHeroData: ', sortedHeroData);
+	}
+	//findAllFollowedHeros();
 	console.log('heroData: ', heroData);
 	console.log(
 		'pendingMortalFollowedIds: ',
 		currentUser.pendingMortalFollowedIds
 	);
+	console.log('mortalFollowedIds: ', currentUser.mortalFollowedIds);
+
+	// displaying the spinner until the API call returns the companies data
+	if (!heroData) return <LoadingSpinner />;
 
 	return (
 		<>
 			<h1>Following</h1>
-			<p>Work in progress...</p>
 			<h2>Superheros</h2>
-			{currentUser.heroFollowedIds &&
-			currentUser.heroFollowedIds.length ? (
+			{heroFollowArray && heroFollowArray.length ? (
 				<div className="SuperheroFollows">
 					<div className="row row-cols-md-2 row-cols-lg-3 g-2 g-lg-3">
-						{currentUser.heroFollowedIds.map((h) => (
-							<HeroFollowCard superhero_id={h} />
+						{sortedHeroData.map((h) => (
+							<HeroFollowCard
+								superhero_id={h.data.id}
+								name={h.data.name}
+								image={h.data.image['url']}
+								intelligence={
+									h.data.powerstats['intelligence']
+								}
+								strength={h.data.powerstats['strength']}
+								speed={h.data.powerstats['speed']}
+								durability={
+									h.data.powerstats['durability']
+								}
+								power={h.data.powerstats['power']}
+								combat={h.data.powerstats['combat']}
+							/>
 						))}
 					</div>
 				</div>
