@@ -9,7 +9,8 @@ function ProfileView() {
 
 	const {
 		currentUser,
-		hasFollowedMortal,
+		mortalFollowIds,
+		pendingMortalFollowIds,
 		followMortal,
 		unfollowMortal,
 	} = useContext(UserContext);
@@ -17,17 +18,7 @@ function ProfileView() {
 	if (!id) id = currentUser.user_id;
 
 	const [otherUser, setOtherUser] = useState(null);
-	const [followedMortal, setFollowedMortal] = useState();
 	const [recentActivity, setRecentActivity] = useState();
-
-	// updating the follow status for
-	useEffect(
-		function updateFollowedMortalStatus() {
-			setFollowedMortal(hasFollowedMortal(id));
-			console.log(hasFollowedMortal(id));
-		},
-		[hasFollowedMortal]
-	);
 
 	// pulling the other user info from API
 	useEffect(
@@ -76,23 +67,17 @@ function ProfileView() {
 	// follow/unfollow a hero
 	function handleFollowMortal(evt) {
 		evt.preventDefault();
-		//if (hasFollowedMortal(user_id)) return;
-
-		// followMortal is a method within the BackendApi class
+		// followMortal is a method on App.js
 		followMortal(id);
-		setFollowedMortal(true);
 	}
 	function handleUnfollowMortal(evt) {
 		evt.preventDefault();
-		//if (!hasFollowedMortal(user_id)) return;
-
-		// followMortal is a method within the BackendApi class
+		// followMortal is a method on App.js
 		unfollowMortal(id);
-		setFollowedMortal(false);
 	}
-
-	console.log('recentActivity: ', recentActivity);
-	console.log('followedMortal: ' + followedMortal);
+	//console.log('recentActivity: ', recentActivity);
+	console.log('mortalFollowIds: ', mortalFollowIds);
+	console.log('pendingMortalFollowIds: ', pendingMortalFollowIds);
 	return (
 		<>
 			<h1>Profile View</h1>
@@ -126,12 +111,12 @@ function ProfileView() {
 					<ul>
 						<li>
 							Superhero Follows:
-							{otherUser['heroFollowedIds'].length}
+							{otherUser['heroFollowIds'].length}
 						</li>
 						<li>Mere Mortal Follows: TBD</li>
 						<li>
 							Superhero Likes:
-							{otherUser['heroLikedIds'].length}
+							{otherUser['heroLikeIds'].length}
 						</li>
 						<li>Superhero Comments: TBD</li>
 					</ul>
@@ -163,21 +148,29 @@ function ProfileView() {
 					)}
 					{otherUser['username'] !== currentUser.username && (
 						<>
-							{!followedMortal && (
-								<form
-									className="form-inline"
-									onSubmit={handleFollowMortal}
-								>
-									<button
-										type="submit"
-										className="btn btn-md btn-primary"
+							{!mortalFollowIds.includes(+id) &&
+								!pendingMortalFollowIds.includes(
+									+id
+								) && (
+									<form
+										className="form-inline"
 										onSubmit={handleFollowMortal}
 									>
-										Follow
-									</button>
-								</form>
-							)}
-							{followedMortal && (
+										<button
+											type="submit"
+											className="btn btn-md btn-primary"
+											onSubmit={
+												handleFollowMortal
+											}
+										>
+											Follow
+										</button>
+									</form>
+								)}
+							{(mortalFollowIds.includes(+id) ||
+								pendingMortalFollowIds.includes(
+									+id
+								)) && (
 								<form
 									className="form-inline"
 									onSubmit={handleUnfollowMortal}

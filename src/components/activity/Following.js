@@ -6,7 +6,12 @@ import SuperheroApi from '../../private/api/superhero-api';
 import LoadingSpinner from '../common/LoadingSpinner';
 
 function Following() {
-	const { currentUser, heroFollowIds } = useContext(UserContext);
+	const {
+		currentUser,
+		heroFollowIds,
+		pendingMortalFollowIds,
+		mortalFollowIds,
+	} = useContext(UserContext);
 
 	const [heroData, setHeroData] = useState();
 
@@ -56,11 +61,8 @@ function Following() {
 	}
 	//findAllFollowedHeros();
 	console.log('heroData: ', heroData);
-	console.log(
-		'pendingMortalFollowedIds: ',
-		currentUser.pendingMortalFollowedIds
-	);
-	console.log('mortalFollowedIds: ', currentUser.mortalFollowedIds);
+	console.log('pendingMortalFollowIds: ', pendingMortalFollowIds);
+	console.log('mortalFollowIds: ', mortalFollowIds);
 
 	// displaying the spinner until the API call returns the companies data
 	if (!heroData) return <LoadingSpinner />;
@@ -71,7 +73,7 @@ function Following() {
 			<h2>Superheros</h2>
 			{heroFollowArray && heroFollowArray.length ? (
 				<div className="SuperheroFollows">
-					<div className="row row-cols-md-2 row-cols-lg-3 g-2 g-lg-3">
+					<div className="row row-cols row-cols-lg-3 g-2 g-lg-3">
 						{sortedHeroData.map((h) => (
 							<HeroFollowCard
 								superhero_id={h.data.id}
@@ -95,11 +97,10 @@ function Following() {
 				<p>No superhero follows yet... what are you waiting for?</p>
 			)}
 			<h2>Mere Mortals</h2>
-			{currentUser.mortalFollowedIds &&
-			currentUser.mortalFollowedIds.length ? (
+			{mortalFollowIds && mortalFollowIds.length ? (
 				<div className="MortalFollows">
 					<div className="row row-cols-md-2 row-cols-lg-3 g-2 g-lg-3">
-						{currentUser.mortalFollowedIds.map((m) => (
+						{mortalFollowIds.map((m) => (
 							<MortalFollowCard user_id={m} />
 						))}
 					</div>
@@ -110,17 +111,14 @@ function Following() {
 					some friends on this app?
 				</p>
 			)}
-			{currentUser.pendingMortalFollowedIds &&
-			currentUser.pendingMortalFollowedIds.length ? (
+			{pendingMortalFollowIds && pendingMortalFollowIds.length ? (
 				<>
 					<h3>Pending</h3>
 					<div className="MortalFollows">
 						<div className="row row-cols-md-2 row-cols-lg-3 g-2 g-lg-3">
-							{currentUser.pendingMortalFollowedIds.map(
-								(n) => (
-									<MortalFollowCard user_id={n} />
-								)
-							)}
+							{pendingMortalFollowIds.map((n) => (
+								<MortalFollowCard user_id={n} />
+							))}
 						</div>
 					</div>
 				</>

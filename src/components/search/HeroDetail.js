@@ -153,12 +153,12 @@ function HeroDetail() {
 	// displaying the spinner until the API call returns the heroes data
 	if (!hero) return <LoadingSpinner />;
 
-	let heroAllUsersFollowedCount = !currentUser.heroAllUsersFollowedIds[id]
+	let heroAllUsersFollowedCount = !currentUser.heroAllUsersFollowIds[id]
 		? 0
-		: currentUser.heroAllUsersFollowedIds[id];
-	let heroAllUsersLikedCount = !currentUser.heroAllUsersLikedIds[id]
+		: currentUser.heroAllUsersFollowIds[id];
+	let heroAllUsersLikedCount = !currentUser.heroAllUsersLikeIds[id]
 		? 0
-		: currentUser.heroAllUsersLikedIds[id];
+		: currentUser.heroAllUsersLikeIds[id];
 
 	let heroAllUsersCommentsCount = !currentUser.heroAllUsersCommentsIds[id]
 		? 0

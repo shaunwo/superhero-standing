@@ -160,7 +160,7 @@ class User {
 			[user.user_id]
 		);
 
-		user.heroFollowedIds = userHeroFollowsRes.rows.map(
+		user.heroFollowIds = userHeroFollowsRes.rows.map(
 			(a) => a.superhero_id
 		);
 
@@ -179,7 +179,7 @@ class User {
 			[user.user_id]
 		);
 
-		user.heroLikedIds = userHeroLikesRes.rows.map((b) => b.superhero_id);
+		user.heroLikeIds = userHeroLikesRes.rows.map((b) => b.superhero_id);
 
 		// looking for ALL users' hero followings
 		const allUsersHeroFollowsRes = await db.query(
@@ -197,13 +197,13 @@ class User {
 				superhero_id ASC
 			`
 		);
-		let heroAllUsersFollowedIds = {};
+		let heroAllUsersFollowIds = {};
 		for (let c = 0; c < allUsersHeroFollowsRes.rows.length; c++) {
-			heroAllUsersFollowedIds[
+			heroAllUsersFollowIds[
 				+allUsersHeroFollowsRes.rows[c].superhero_id
 			] = +allUsersHeroFollowsRes.rows[c].superhero_follow_count;
 		}
-		user.heroAllUsersFollowedIds = heroAllUsersFollowedIds;
+		user.heroAllUsersFollowIds = heroAllUsersFollowIds;
 
 		// looking for ALL users' hero likes
 		const allUsersHeroLikesRes = await db.query(
@@ -221,13 +221,13 @@ class User {
 				superhero_id ASC
 			`
 		);
-		let heroAllUsersLikedIds = {};
+		let heroAllUsersLikeIds = {};
 		for (let d = 0; d < allUsersHeroLikesRes.rows.length; d++) {
-			heroAllUsersLikedIds[
+			heroAllUsersLikeIds[
 				+allUsersHeroLikesRes.rows[d].superhero_id
 			] = +allUsersHeroLikesRes.rows[d].superhero_like_count;
 		}
-		user.heroAllUsersLikedIds = heroAllUsersLikedIds;
+		user.heroAllUsersLikeIds = heroAllUsersLikeIds;
 
 		// looking for ALL users' hero comments
 		const allUsersHeroCommentsRes = await db.query(
@@ -268,7 +268,7 @@ class User {
 			[user.user_id]
 		);
 
-		user.mortalFollowedIds = userMortalFollowsRes.rows.map(
+		user.mortalFollowIds = userMortalFollowsRes.rows.map(
 			(f) => f.connectee_user_id
 		);
 
@@ -287,7 +287,7 @@ class User {
 			[user.user_id]
 		);
 
-		user.pendingMortalFollowedIds = userPendingMortalFollowsRes.rows.map(
+		user.pendingMortalFollowIds = userPendingMortalFollowsRes.rows.map(
 			(g) => g.connectee_user_id
 		);
 
@@ -332,7 +332,7 @@ class User {
 			[user.user_id]
 		);
 
-		user.heroFollowedIds = userHeroFollowsRes.rows.map(
+		user.heroFollowIds = userHeroFollowsRes.rows.map(
 			(a) => a.superhero_id
 		);
 
@@ -351,7 +351,7 @@ class User {
 			[user.user_id]
 		);
 
-		user.heroLikedIds = userHeroLikesRes.rows.map((b) => b.superhero_id);
+		user.heroLikeIds = userHeroLikesRes.rows.map((b) => b.superhero_id);
 
 		return user;
 	}

@@ -32,30 +32,12 @@ function SearchCard({
 		heroFollowIds,
 		uploadHeroImage,
 	} = useContext(UserContext);
-	const [followed, setFollowed] = useState();
-	const [liked, setLiked] = useState();
-	const [allUsersFollowed, setAllUsersFollowed] = useState();
-
+	const [heroLikeIds, setHeroLikeIds] = useState();
 	const [commentFormData, setCommentFormData] = useState({
 		comments: '',
 	});
 	const [uploadFormData, setUploadFormData] = useState();
 	const [image, setImage] = useState('');
-
-	useEffect(
-		function updateFollowedStatus() {
-			setFollowed(hasFollowedHero(id));
-			//console.log(hasFollowedHero(id));
-		},
-		[id, hasFollowedHero]
-	);
-	useEffect(
-		function updateLikedStatus() {
-			setLiked(hasLikedHero(id));
-			//console.log(hasLikedHero(id));
-		},
-		[id, hasLikedHero]
-	);
 
 	// follow/unfollow a hero
 	async function handleFollow(evt) {
@@ -128,23 +110,18 @@ function SearchCard({
 	}
 
 	console.log('heroFollowIds: ', heroFollowIds);
-	console.log('followed: ', followed);
-	console.log('allUsersFollowed: ', allUsersFollowed);
-	console.log(
-		'heroAllUsersFollowedIds: ',
-		currentUser.heroAllUsersFollowedIds
-	);
+	console.log('heroAllUsersFollowIds: ', currentUser.heroAllUsersFollowIds);
 	console.log(
 		'heroAllUsersCommentsIds: ',
 		currentUser.heroAllUsersCommentsIds
 	);
 
-	let heroAllUsersFollowedCount = !currentUser.heroAllUsersFollowedIds[id]
+	let heroAllUsersFollowedCount = !currentUser.heroAllUsersFollowIds[id]
 		? 0
-		: currentUser.heroAllUsersFollowedIds[id];
-	let heroAllUsersLikedCount = !currentUser.heroAllUsersLikedIds[id]
+		: currentUser.heroAllUsersFollowIds[id];
+	let heroAllUsersLikedCount = !currentUser.heroAllUsersLikeIds[id]
 		? 0
-		: currentUser.heroAllUsersLikedIds[id];
+		: currentUser.heroAllUsersLikeIds[id];
 
 	let heroAllUsersCommentsCount = !currentUser.heroAllUsersCommentsIds[id]
 		? 0
@@ -174,7 +151,7 @@ function SearchCard({
 				</ul>
 			</div>
 			<div className="card-footer">
-				{hasFollowedHero(id) && (
+				{heroFollowIds.has(+id) && (
 					<a title={`Unfollow ${name}`} onClick={handleUnfollow}>
 						<img
 							src="/img/unfollow-icon.png"
@@ -182,7 +159,7 @@ function SearchCard({
 						/>
 					</a>
 				)}
-				{!hasFollowedHero(id) && (
+				{!heroFollowIds.has(+id) && (
 					<a title={`Follow ${name}`} onClick={handleFollow}>
 						<img src="/img/follow-icon.png" alt="Follow" />
 					</a>

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
+import UserContext from '../../private/auth/UserContext';
 import SearchForm from '../common/SearchForm';
 import SearchCard from './HeroSearchCard';
 import SuperheroApi from '../../private/api/superhero-api';
@@ -6,6 +7,18 @@ import SuperheroApi from '../../private/api/superhero-api';
 
 function Search() {
 	console.log('Search for superheros');
+	const {
+		currentUser,
+		hasFollowedHero,
+		followHero,
+		unfollowHero,
+		hasLikedHero,
+		likeHero,
+		unlikeHero,
+		commentOnHero,
+		heroFollowIds,
+		uploadHeroImage,
+	} = useContext(UserContext);
 
 	// setting companies in state
 	const [heros, setHeros] = useState(null);
@@ -37,6 +50,8 @@ function Search() {
 
 	// displaying the spinner until the API call returns the heros data
 	//if (!heros) return <LoadingSpinner />;
+
+	console.log('heroFollowIds on Search.js: ', heroFollowIds);
 
 	return (
 		<>
