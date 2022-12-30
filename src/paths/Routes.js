@@ -10,6 +10,7 @@ import LoginForm from '../components/account/LoginForm';
 import SignupForm from '../components/account/SignupForm';
 import ProfileForm from '../components/account/ProfileForm';
 import ProfileView from '../components/account/ProfileView';
+import Followers from '../components/account/Followers';
 import PrivateRoutes from './PrivateRoutes';
 
 /** Site-wide routes.
@@ -62,6 +63,11 @@ function Paths({ login, signup }) {
 						exact
 						path="/profile/edit"
 						element={<ProfileForm />}
+					/>
+					<Route
+						exact
+						path="/profile/followers"
+						element={<Followers />}
 					/>
 					<Route
 						exact

@@ -2,8 +2,10 @@
 	float: right;
 	width: 150px;
 }
-.card-body button {
+.card-body button,
+.card-footer button {
 	margin-right: 5px;
+	cursor: pointer;
 }
 .card-footer a {
 	margin-right: 5px;

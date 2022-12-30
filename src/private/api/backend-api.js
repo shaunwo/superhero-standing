@@ -143,6 +143,25 @@ class BackendApi {
 		return res;
 	}
 
+	// approve a follower
+	static async approveMortalFollower(userId, id, data) {
+		let res = await this.request(
+			`users/follower/approve/${userId}/${id}`,
+			data,
+			'get'
+		);
+		return res;
+	}
+	// reject a follower
+	static async rejectMortalFollower(userId, id, data) {
+		let res = await this.request(
+			`users/follower/reject/${userId}/${id}`,
+			data,
+			'get'
+		);
+		return res;
+	}
+
 	// pull recent activity for a user
 	static async getRecentActivity(id, data) {
 		let res = await this.request(`users/activity/${id}`, data, 'get');

@@ -21,6 +21,8 @@ function App() {
 	const [heroFollowIds, setHeroFollowIds] = useState(new Set([]));
 	const [mortalFollowIds, setMortalFollowIds] = useState();
 	const [pendingMortalFollowIds, setPendingMortalFollowIds] = useState();
+	const [mortalFollowerIds, setMortalFollowerIds] = useState();
+	const [pendingMortalFollowerIds, setPendingMortalFollowerIds] = useState();
 	const [heroLikeIds, setHeroLikeIds] = useState(new Set([]));
 	const [heroAllUsersFollowIds, setHeroAllUsersFollowIds] = useState(
 		new Object({})
@@ -88,6 +90,12 @@ function App() {
 						setPendingMortalFollowIds(
 							currentUser.pendingMortalFollowIds
 						);
+						setMortalFollowerIds(
+							currentUser.mortalFollowerIds
+						);
+						setPendingMortalFollowerIds(
+							currentUser.pendingMortalFollowerIds
+						);
 					} catch (err) {
 						console.error(
 							'App loadUserInfo: problem loading',
@@ -102,6 +110,8 @@ function App() {
 						setHeroAllUsersUploadsIds(null);
 						setMortalFollowIds(null);
 						setPendingMortalFollowIds(null);
+						setMortalFollowerIds(null);
+						setPendingMortalFollowerIds(null);
 					}
 				}
 				setInfoLoaded(true);
@@ -297,41 +307,81 @@ function App() {
 		}*/
 	}
 
-	// follow a mortal - API call, and update set of FollowMortalIds
+	// follow a mortal - API call, and update array of pendingMortalFollowIds
 	function followMortal(id) {
 		BackendApi.followMortal(currentUser.user_id, id);
 		setPendingMortalFollowIds([...pendingMortalFollowIds, +id]);
 	}
-	// unfollow a mortal - API call, and update set of FollowMortalIds
+	// unfollow a mortal - API call, and update array of FollowMortalIds
 	function unfollowMortal(id) {
 		BackendApi.unfollowMortal(currentUser.user_id, id);
-		console.log(
+		/*console.log(
 			'pendingMortalFollowIds on App.js BEFORE: ',
 			pendingMortalFollowIds
 		);
-		console.log('pendingMortalFollowIds id on App.js: ' + id);
-		if (mortalFollowIds && mortalFollowIds.includes(id)) {
-			const idx = mortalFollowIds.indexOf(id);
-			setMortalFollowIds(mortalFollowIds.splice(idx, 1));
+		console.log('pendingMortalFollowIds id on App.js: ' + id);*/
+		if (mortalFollowIds && mortalFollowIds.includes(+id)) {
+			const idx = mortalFollowIds.indexOf(+id);
+			//setMortalFollowIds(mortalFollowIds.splice(+idx, 1));
+			setMortalFollowIds((s) => {
+				s.splice(idx, 1);
+				return [...s];
+			});
 		} else if (
 			pendingMortalFollowIds &&
-			pendingMortalFollowIds.includes(id)
+			pendingMortalFollowIds.includes(+id)
 		) {
 			const idx = pendingMortalFollowIds.indexOf(+id);
-			setMortalFollowIds(pendingMortalFollowIds.splice(idx, 1));
-			/*setPendingMortalFollowIds((s) => {
-				s.delete(+id);
-				return new Array(s);
-			});*/
+			//console.log('pendingMortalFollowIds idx on App.js: ' + idx);
+			//setMortalFollowIds(pendingMortalFollowIds.splice(idx, 1));
+			setPendingMortalFollowIds((s) => {
+				s.splice(idx, 1);
+				return [...s];
+			});
 		}
-		console.log(
+		/* console.log(
 			'pendingMortalFollowIds on App.js AFTER: ',
 			pendingMortalFollowIds
-		);
+		); */
 	}
-	// checks to see if a hero has been followed, yet
-	function hasFollowedMortal(id) {
-		return mortalFollowIds.has(+id);
+
+	// follow a mortal - API call, and update array of pendingMortalFollowIds
+	function approveMortalFollower(id) {
+		BackendApi.approveMortalFollower(currentUser.user_id, id);
+		setMortalFollowerIds([...mortalFollowerIds, +id]);
+		const idx = pendingMortalFollowerIds.indexOf(+id);
+		console.log('pendingMortalFollowerIds idx:' + idx);
+		const newPendingMortalFollowerIds = pendingMortalFollowerIds.splice(
+			idx,
+			1
+		);
+		console.log(
+			'newPendingMortalFollowerIds:',
+			newPendingMortalFollowerIds
+		);
+		/*setPendingMortalFollowerIds((s) => {
+			s.splice(idx, 1);
+			return s;
+		});*/
+	}
+	function rejectMortalFollower(id) {
+		BackendApi.rejectMortalFollower(currentUser.user_id, id);
+		if (mortalFollowerIds && mortalFollowerIds.includes(+id)) {
+			const idx = mortalFollowerIds.indexOf(+id);
+			setMortalFollowerIds((s) => {
+				s.splice(idx, 1);
+				return [...s];
+			});
+		} else if (
+			pendingMortalFollowerIds &&
+			pendingMortalFollowerIds.includes(+id)
+		) {
+			const idx = pendingMortalFollowerIds.indexOf(+id);
+			setPendingMortalFollowerIds((s) => {
+				s.splice(idx, 1);
+				return [...s];
+			});
+		}
 	}
 
 	// displaying the spinner on the screen if no other data has been loaded, yet
@@ -351,7 +401,6 @@ function App() {
 					unlikeHero,
 					commentOnHero,
 					uploadHeroImage,
-					hasFollowedMortal,
 					followMortal,
 					unfollowMortal,
 					heroFollowIds,
@@ -362,6 +411,10 @@ function App() {
 					heroAllUsersUploadsIds,
 					mortalFollowIds,
 					pendingMortalFollowIds,
+					mortalFollowerIds,
+					pendingMortalFollowerIds,
+					rejectMortalFollower,
+					approveMortalFollower,
 				}}
 			>
 				<div className="App" id="wrapper">

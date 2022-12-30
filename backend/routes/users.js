@@ -126,6 +126,36 @@ router.get(
 		}
 	}
 );
+router.get(
+	'/follower/approve/:connector_user_id/:connectee_user_id',
+	ensureLoggedIn,
+	async function(req, res, next) {
+		try {
+			const user = await User.approveFollower(
+				req.params.connector_user_id,
+				req.params.connectee_user_id
+			);
+			return res.json({ user });
+		} catch (err) {
+			return next(err);
+		}
+	}
+);
+router.get(
+	'/follower/reject/:connector_user_id/:connectee_user_id',
+	ensureLoggedIn,
+	async function(req, res, next) {
+		try {
+			const user = await User.rejectFollower(
+				req.params.connector_user_id,
+				req.params.connectee_user_id
+			);
+			return res.json({ user });
+		} catch (err) {
+			return next(err);
+		}
+	}
+);
 
 /** PATCH /[username] { user } => { user }
  *

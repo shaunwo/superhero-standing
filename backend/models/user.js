@@ -291,6 +291,44 @@ class User {
 			(g) => g.connectee_user_id
 		);
 
+		// looking for this user's APPROVED mortal followings
+		const userMortalFollowersRes = await db.query(
+			`
+					SELECT
+						u.connector_user_id
+					FROM
+						 user_connections AS u
+					WHERE
+						 u.connectee_user_id = $1
+							AND
+						u.active=TRUE
+					 `,
+			[user.user_id]
+		);
+
+		user.mortalFollowerIds = userMortalFollowersRes.rows.map(
+			(h) => h.connector_user_id
+		);
+
+		// looking for this user's PENDING mortal followings
+		const userPendingMortalFollowersRes = await db.query(
+			`
+					SELECT
+						u.connector_user_id
+					FROM
+						 user_connections AS u
+					WHERE
+						 u.connectee_user_id = $1
+							AND
+						u.active=FALSE
+					 `,
+			[user.user_id]
+		);
+
+		user.pendingMortalFollowerIds = userPendingMortalFollowersRes.rows.map(
+			(i) => i.connector_user_id
+		);
+
 		return user;
 	}
 
@@ -477,6 +515,49 @@ class User {
 				connector_user_id=$1
 					AND
 				connectee_user_id=$2
+			RETURNING
+				connection_id
+				`,
+			[connector_user_id, connectee_user_id]
+		);
+
+		const user = userRes.rows[0];
+
+		if (!user) throw new NotFoundError(`No user: ${connectee_user_id}`);
+	}
+
+	/* 
+	APPROVE / REJECT FOLLOWER
+	*/
+	static async approveFollower(connector_user_id, connectee_user_id) {
+		const userRes = await db.query(
+			`
+			UPDATE
+				user_connections
+			SET
+				active=TRUE
+			WHERE
+				connectee_user_id=$1
+					AND
+				connector_user_id=$2
+			RETURNING
+				connection_id
+				`,
+			[connector_user_id, connectee_user_id]
+		);
+		const user = userRes.rows[0];
+
+		if (!user) throw new NotFoundError(`No user: ${connectee_user_id}`);
+	}
+	static async rejectFollower(connector_user_id, connectee_user_id) {
+		const userRes = await db.query(
+			`
+			DELETE FROM
+				user_connections
+			WHERE
+				connectee_user_id=$1
+					AND
+				connector_user_id=$2
 			RETURNING
 				connection_id
 				`,

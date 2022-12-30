@@ -10,7 +10,6 @@ import './ActivityCard.css';
 
 function MortalFollowCard({ user_id }) {
 	const { unfollowMortal } = useContext(UserContext);
-	const [followedMortal, setFollowedMortal] = useState();
 
 	function handleUnfollowMortal(evt) {
 		evt.preventDefault();
@@ -21,25 +20,21 @@ function MortalFollowCard({ user_id }) {
 	// displaying the search card on the screen
 	return (
 		<div className="card">
-			<div className="card-body">
-				{user_id}
-				<div>
-					<a
-						href={`/profile/${user_id}`}
-						title={`View Profile for ${user_id}`}
-					>
-						More Details
-					</a>
-				</div>
-			</div>
+			<div className="card-body">{user_id}</div>
 			<div className="card-footer">
 				<button
 					className="btn btn-sm btn-primary"
 					onClick={handleUnfollowMortal}
 					title={`Cancel Follow Request`}
 				>
-					Cancel
+					Unfollow
 				</button>
+				<a
+					href={`/profile/${user_id}`}
+					title={`View Profile for ${user_id}`}
+				>
+					More Details
+				</a>
 			</div>
 		</div>
 	);

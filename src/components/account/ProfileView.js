@@ -88,6 +88,10 @@ function ProfileView() {
 							<a href={`/profile/edit`}>
 								Edit Your Profile
 							</a>
+							&nbsp; | &nbsp;
+							<a href={`/profile/followers`}>
+								Manage Followers
+							</a>
 						</p>
 					)}
 					<h2>{otherUser['username']}</h2>
