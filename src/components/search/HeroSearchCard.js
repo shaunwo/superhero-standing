@@ -139,7 +139,6 @@ function SearchCard({
 					/>
 				)}
 				<h2 className="card-title">{name}</h2>
-				<p>ID: {id}</p>
 				<h3>Powerstats</h3>
 				<ul>
 					<li>Intelligence: {intelligence}</li>

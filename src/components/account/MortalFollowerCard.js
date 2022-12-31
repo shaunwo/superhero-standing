@@ -1,7 +1,16 @@
 import React, { useContext, useState } from 'react';
 import UserContext from '../../private/auth/UserContext';
 
-function MortalFollowerCard({ user_id, approveBtn }) {
+function MortalFollowerCard({
+	user_id,
+	username,
+	firstName,
+	lastName,
+	location,
+	heroFollowIds,
+	heroLikeIds,
+	approveBtn,
+}) {
 	// defining methods from UserContext
 	const { approveMortalFollower, rejectMortalFollower } = useContext(
 		UserContext
@@ -23,7 +32,19 @@ function MortalFollowerCard({ user_id, approveBtn }) {
 	// displaying the follower on the screen
 	return (
 		<div className="card">
-			<div className="card-body">{user_id}</div>
+			<div className="card-body">
+				<h3>{username}</h3>
+				<div>
+					{`${firstName} ${lastName}`}
+					<br />
+					Location: {location}
+					<br />
+					<strong>{heroFollowIds.length}</strong> Hero Follows
+					<br />
+					<strong>{heroLikeIds.length}</strong> Hero Likes
+					<br />
+				</div>
+			</div>
 			<div className="card-footer">
 				{approveBtn === true && (
 					<button

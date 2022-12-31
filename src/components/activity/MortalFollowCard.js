@@ -8,7 +8,15 @@ import './ActivityCard.css';
 	unfollowMortal(id);
 } */
 
-function MortalFollowCard({ user_id }) {
+function MortalFollowCard({
+	user_id,
+	username,
+	firstName,
+	lastName,
+	location,
+	heroFollowIds,
+	heroLikeIds,
+}) {
 	const { unfollowMortal } = useContext(UserContext);
 
 	function handleUnfollowMortal(evt) {
@@ -20,7 +28,19 @@ function MortalFollowCard({ user_id }) {
 	// displaying the search card on the screen
 	return (
 		<div className="card">
-			<div className="card-body">{user_id}</div>
+			<div className="card-body">
+				<h3>{username}</h3>
+				<div>
+					{`${firstName} ${lastName}`}
+					<br />
+					Location: {location}
+					<br />
+					<strong>{heroFollowIds.length}</strong> Hero Follows
+					<br />
+					<strong>{heroLikeIds.length}</strong> Hero Likes
+					<br />
+				</div>
+			</div>
 			<div className="card-footer">
 				<button
 					className="btn btn-sm btn-primary"
