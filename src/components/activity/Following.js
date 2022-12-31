@@ -19,25 +19,22 @@ function Following() {
 
 	// finding data for all the heros that the currentUser is following
 	const heroFollowArray = [...heroFollowIds];
-	useEffect(
-		function findAllFollowedHeros() {
-			let response = [];
-			const a = heroFollowArray.map((h) => SuperheroApi.getHero(h));
-			console.log(a);
-			Promise.allSettled([a]).then((result) => {
-				result[0].value.forEach(async (result) => {
-					await result.then((val) => {
-						response.push(val.data);
-						if (response.length === a.length) {
-							console.log(response);
-							setHeroData(response);
-						}
-					});
+	useEffect(function findAllFollowedHeros() {
+		let response = [];
+		const a = heroFollowArray.map((h) => SuperheroApi.getHero(h));
+		console.log(a);
+		Promise.allSettled([a]).then((result) => {
+			result[0].value.forEach(async (result) => {
+				await result.then((val) => {
+					response.push(val.data);
+					if (response.length === a.length) {
+						console.log(response);
+						setHeroData(response);
+					}
 				});
 			});
-		},
-		[heroFollowIds]
-	);
+		});
+	}, []);
 
 	// sorting the result set of the heroes by the hero name
 	function sortHerosByName(a, b) {
@@ -140,7 +137,7 @@ function Following() {
 	console.log('pendingMortalFollowIds: ', pendingMortalFollowIds);
 	console.log('pendingMortalFollowData: ', pendingMortalFollowData);
 
-	// displaying the spinner until the API call returns the companies data
+	// displaying the spinner until the API call returns the hero data
 	if (!heroData) return <LoadingSpinner />;
 
 	return (

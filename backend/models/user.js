@@ -417,6 +417,34 @@ class User {
 
 		return recentActivity;
 	}
+
+	static async getLeaderBoard() {
+		const leaderBoardRes = await db.query(
+			`
+			SELECT 
+				superhero_id, COUNT(follow_id) AS FollowCount,
+				(SELECT COUNT(like_id) FROM likes l WHERE active=TRUE AND l.superhero_id=f.superhero_id GROUP BY l.superhero_id) AS LikeCount,
+				(SELECT COUNT(comment_id) FROM comments c WHERE active=TRUE AND c.superhero_id=f.superhero_id GROUP BY c.superhero_id) AS CommentCount
+           	FROM
+				follows f
+           	WHERE
+				active = TRUE
+			GROUP BY
+				superhero_id
+			ORDER BY
+				FollowCount DESC
+			LIMIT
+				15
+			`
+		);
+
+		const leaderBoard = leaderBoardRes.rows;
+
+		if (!leaderBoard) throw new NotFoundError(`No leaderBoard data`);
+
+		return leaderBoard;
+	}
+
 	/** Update user data with `data`.
 	 *
 	 * This is a "partial update" --- it's fine if data doesn't contain

@@ -143,6 +143,8 @@ class BackendApi {
 		return res;
 	}
 
+	/* BEGIN CURRENTUSER ACTIONS */
+
 	// approve a follower
 	static async approveMortalFollower(userId, id, data) {
 		let res = await this.request(
@@ -167,6 +169,22 @@ class BackendApi {
 		let res = await this.request(`users/activity/${id}`, data, 'get');
 		return res;
 	}
+
+	/* END CURRENTUSER ACTIONS */
+
+	/* BEGIN LEADER BOARD ACTIONS */
+
+	// pull leaderboard info for all heroes
+	static async getLeaderBoard(userId, data) {
+		let res = await this.request(
+			`users/leaderboard/${userId}`,
+			data,
+			'get'
+		);
+		return res;
+	}
+
+	/* END LEADER BOARD ACTIONS */
 }
 
 export default BackendApi;

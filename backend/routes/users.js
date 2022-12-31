@@ -95,6 +95,18 @@ router.get('/activity/:id', ensureLoggedIn, async function(req, res, next) {
 		return next(err);
 	}
 });
+router.get('/leaderboard/:user_id', ensureLoggedIn, async function(
+	req,
+	res,
+	next
+) {
+	try {
+		const leaderBoard = await User.getLeaderBoard(req.params.user_id);
+		return res.json(leaderBoard);
+	} catch (err) {
+		return next(err);
+	}
+});
 
 router.get(
 	'/follow/:connector_user_id/:connectee_user_id',

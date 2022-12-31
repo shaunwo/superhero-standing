@@ -34,7 +34,6 @@ router.get(
 	ensureCorrectUserId,
 	async function(req, res, next) {
 		try {
-			console.log('Inside backend > routes > user.js: ');
 			const follow_id = await Hero.unfollowHero(
 				req.params.userId,
 				req.params.username,
@@ -53,7 +52,6 @@ router.get(
 	ensureCorrectUserId,
 	async function(req, res, next) {
 		try {
-			console.log('Inside backend > routes > user.js: ');
 			const like_id = await Hero.likeHero(
 				req.params.userId,
 				req.params.username,
@@ -127,7 +125,6 @@ router.post(
 router.get('/comments/:heroId', ensureLoggedIn, async function(req, res, next) {
 	console.log('Inside backend > routes > heroes.js: ... /comments/:heroId');
 	try {
-		console.log('Inside backend > routes > user.js: ');
 		const { comments } = req.body;
 		console.log('comments: ', comments);
 		const commentOnHero = await Hero.heroComments(req.params.heroId);
