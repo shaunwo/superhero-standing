@@ -285,12 +285,13 @@ class Hero {
 		username,
 		heroId,
 		superheroName,
-		uploadFile
+		cloudinaryURL
 	) {
-		// upload image through cloudinary
-		const secure_url = await uploadImage(uploadFile);
-		console.log('secure_url: ' + secure_url);
-		/* const uploadHeroImageRes = await db.query(
+		console.log(
+			'cloudinaryURL on backend > models > hero.js: ' + cloudinaryURL
+		);
+
+		const uploadHeroImageRes = await db.query(
 			`
 				INSERT INTO
 					images
@@ -304,13 +305,16 @@ class Hero {
 					($1, $2, $3, TRUE)
 				RETURNING image_url
 				`,
-			[userId, heroId, image_url]
+			[userId, heroId, cloudinaryURL]
 		);
-		console.log('SQL result in backend > models > user.js: ', uploadHeroImageRes);
-		const upload_id = uploadHeroImageRes.rows[0];
+		console.log(
+			'SQL result in backend > models > user.js: ',
+			uploadHeroImageRes
+		);
+		const image_url = uploadHeroImageRes.rows[0];
 
-		if (!upload_id) throw new NotFoundError(`No comment: ${heroId}`);
- */
+		if (!image_url) throw new NotFoundError(`No image: ${image_url}`);
+
 		// adding to activity log
 		const uploadActivityRes = await db.query(
 			`
@@ -327,14 +331,20 @@ class Hero {
 				($1, $2, $3, $4, $5)
 			RETURNING activity_id
 			`,
-			[userId, username, heroId, superheroName, 'uploaded image for']
+			[
+				userId,
+				username,
+				heroId,
+				superheroName,
+				'uploaded an image for',
+			]
 		);
 		const activity_id = uploadActivityRes.rows[0];
 
 		if (!activity_id)
 			throw new NotFoundError(`No upload activity: ${heroId}`);
 
-		//return image_url;
+		return image_url;
 	}
 
 	// pull comments for a hero
@@ -343,7 +353,9 @@ class Hero {
 			`
 				SELECT
 					c.*,
-					u.username
+					u.username,
+					to_char(c.created_dt, 'FMMM/FMDD/YYYY') AS created_date,
+					to_char(c.created_dt, 'FMHH12:MI AM') AS created_time
 				FROM
 					comments c
 				JOIN
@@ -365,6 +377,38 @@ class Hero {
 		);
 		const comments = heroCommentRes.rows;
 		return comments;
+	}
+
+	// pull images for a hero
+	static async heroImages(heroId) {
+		const heroImagesRes = await db.query(
+			`
+				SELECT
+					i.*,
+					u.username,
+					to_char(i.created_dt, 'FMMM/FMDD/YYYY') AS created_date,
+					to_char(i.created_dt, 'FMHH12:MI AM') AS created_time
+				FROM
+					images i
+				JOIN
+					users u ON i.user_id=u.user_id
+				WHERE
+					superhero_id=$1
+						AND
+					i.active=TRUE
+						AND
+					u.active=TRUE
+				ORDER BY
+					created_dt DESC
+				`,
+			[heroId]
+		);
+		console.log(
+			'SQL result in backend > models > user.js: ',
+			heroImagesRes
+		);
+		const images = heroImagesRes.rows;
+		return images;
 	}
 }
 

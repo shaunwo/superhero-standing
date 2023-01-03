@@ -4,7 +4,8 @@ import UserContext from '../../private/auth/UserContext';
 import BackendApi from '../../private/api/backend-api';
 import SuperheroApi from '../../private/api/superhero-api';
 import LoadingSpinner from '../common/LoadingSpinner';
-import CommentCard from './HeroCommentCard';
+import HeroCommentCard from './HeroCommentCard';
+import HeroImageCard from './HeroImageCard';
 import './HeroDetail.css';
 
 /** Hero Detail page.
@@ -34,6 +35,7 @@ function HeroDetail() {
 	const [allUsersFollowed, setAllUsersFollowed] = useState();
 	const [allUsersLiked, setAllUsersLiked] = useState();
 	const [heroComments, setHeroComments] = useState();
+	const [heroImages, setHeroImages] = useState();
 	const [commentFormData, setCommentFormData] = useState({
 		comments: '',
 	});
@@ -150,6 +152,27 @@ function HeroDetail() {
 		[id]
 	);
 
+	// pulling images for the hero
+	useEffect(
+		function getHeroImages() {
+			async function getHeroImagesAPI() {
+				try {
+					let heroImagesRes = await BackendApi.getUserImages(id);
+					let heroImages = heroImagesRes;
+					console.log('heroImages: ', heroImages);
+					setHeroImages(heroImages);
+				} catch (err) {
+					console.error(
+						'App getHeroCommentsAPI: problem loading',
+						err
+					);
+				}
+			}
+			getHeroImagesAPI();
+		},
+		[id]
+	);
+
 	// displaying the spinner until the API call returns the heroes data
 	if (!hero) return <LoadingSpinner />;
 
@@ -163,10 +186,13 @@ function HeroDetail() {
 	let heroAllUsersCommentsCount = !currentUser.heroAllUsersCommentsIds[id]
 		? 0
 		: currentUser.heroAllUsersCommentsIds[id];
+	let heroAllUsersImagesCount = !currentUser.heroAllUsersImagesIds[id]
+		? 0
+		: currentUser.heroAllUsersImagesIds[id];
 
 	// displaying the hero details on the screen
 	return (
-		<div className="HeroDetail">
+		<div id="HeroDetail">
 			<div className="container-fluid">
 				<h1>{hero['name']}</h1>
 
@@ -274,13 +300,15 @@ function HeroDetail() {
 					<div className="col-lg-6 details-block">
 						<h2>User Comments</h2>
 						{heroComments && heroComments.length ? (
-							<div className="SuperheroComments">
+							<div id="SuperheroComments">
 								{heroComments.map((c) => (
-									<CommentCard
+									<HeroCommentCard
 										user_id={c.user_id}
 										comment={c.comments}
-										created_dt={c.created_dt}
+										created_date={c.created_date}
+										created_time={c.created_time}
 										username={c.username}
+										superhero_name={hero['name']}
 									/>
 								))}
 							</div>
@@ -290,7 +318,22 @@ function HeroDetail() {
 					</div>
 					<div className="col-lg-6 details-block">
 						<h2>User Images</h2>
-						<p>Coming soon...</p>
+						{heroImages && heroImages.length ? (
+							<div id="SuperheroImages">
+								{heroImages.map((i) => (
+									<HeroImageCard
+										user_id={i.user_id}
+										image_url={i.image_url}
+										created_date={i.created_date}
+										created_time={i.created_time}
+										username={i.username}
+										superhero_name={hero['name']}
+									/>
+								))}
+							</div>
+						) : (
+							<p>No comments on this hero, yet.</p>
+						)}
 					</div>
 				</div>
 			</div>
@@ -373,7 +416,12 @@ function HeroDetail() {
 							alt="Upload YOUR Image"
 						/>
 					</a>
-					<span className="activity-counter">NumImages</span>
+					<span
+						className="activity-counter"
+						title={`${heroAllUsersImagesCount} Image(s) for ${hero['name']}`}
+					>
+						{heroAllUsersImagesCount}
+					</span>
 					<div
 						className="collapse commentsBox"
 						id={`commentsArea.${id}`}

@@ -5,6 +5,7 @@ import MortalFollowCard from './MortalFollowCard';
 import SuperheroApi from '../../private/api/superhero-api';
 import BackendApi from '../../private/api/backend-api';
 import LoadingSpinner from '../common/LoadingSpinner';
+import './Following.css';
 
 function Following() {
 	const {
@@ -19,22 +20,25 @@ function Following() {
 
 	// finding data for all the heros that the currentUser is following
 	const heroFollowArray = [...heroFollowIds];
-	useEffect(function findAllFollowedHeros() {
-		let response = [];
-		const a = heroFollowArray.map((h) => SuperheroApi.getHero(h));
-		console.log(a);
-		Promise.allSettled([a]).then((result) => {
-			result[0].value.forEach(async (result) => {
-				await result.then((val) => {
-					response.push(val.data);
-					if (response.length === a.length) {
-						console.log(response);
-						setHeroData(response);
-					}
+	useEffect(
+		function findAllFollowedHeros() {
+			let response = [];
+			const a = heroFollowArray.map((h) => SuperheroApi.getHero(h));
+			console.log(a);
+			Promise.allSettled([a]).then((result) => {
+				result[0].value.forEach(async (result) => {
+					await result.then((val) => {
+						response.push(val.data);
+						if (response.length === a.length) {
+							console.log(response);
+							setHeroData(response);
+						}
+					});
 				});
 			});
-		});
-	}, []);
+		},
+		[heroFollowIds]
+	);
 
 	// sorting the result set of the heroes by the hero name
 	function sortHerosByName(a, b) {
@@ -145,7 +149,7 @@ function Following() {
 			<h1>Following</h1>
 			<h2>Superheros</h2>
 			{heroFollowArray && heroFollowArray.length ? (
-				<div className="SuperheroFollows">
+				<div id="SuperheroFollows">
 					<div className="row row-cols row-cols-lg-3 g-2 g-lg-3">
 						{sortedHeroData.map((h) => (
 							<HeroFollowCard

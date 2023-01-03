@@ -103,19 +103,27 @@ router.post(
 	}
 );
 router.post(
-	'/:userId/upload/hero/:heroId/:username/:superheroName',
+	'/:userId/upload/hero/:heroId/:username/:superheroName/',
 	ensureCorrectUserId,
 	async function(req, res, next) {
 		try {
-			const { upload } = req.body;
-			const comment_id = await Hero.uploadHeroImage(
+			const { cloudinaryURL } = req.body;
+			console.log(
+				'req.body on backend > routes > heroes.js: ',
+				req.body
+			);
+			console.log(
+				'cloudinaryURL on backend > routes > heroes.js: ' +
+					cloudinaryURL
+			);
+			const image_url = await Hero.uploadHeroImage(
 				req.params.userId,
 				req.params.username,
 				req.params.heroId,
 				req.params.superheroName,
-				upload
+				cloudinaryURL
 			);
-			return res.json({ comment_id });
+			return res.json({ image_url });
 		} catch (err) {
 			return next(err);
 		}
@@ -125,10 +133,17 @@ router.post(
 router.get('/comments/:heroId', ensureLoggedIn, async function(req, res, next) {
 	console.log('Inside backend > routes > heroes.js: ... /comments/:heroId');
 	try {
-		const { comments } = req.body;
-		console.log('comments: ', comments);
 		const commentOnHero = await Hero.heroComments(req.params.heroId);
 		return res.json(commentOnHero);
+	} catch (err) {
+		return next(err);
+	}
+});
+router.get('/images/:heroId', ensureLoggedIn, async function(req, res, next) {
+	console.log('Inside backend > routes > heroes.js: ... /images/:heroId');
+	try {
+		const imagesForHero = await Hero.heroImages(req.params.heroId);
+		return res.json(imagesForHero);
 	} catch (err) {
 		return next(err);
 	}

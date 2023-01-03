@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { isCompositeComponent } from 'react-dom/test-utils';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL || 'http://localhost:3001';
 
@@ -110,9 +111,10 @@ class BackendApi {
 	}
 	// image for a hero
 	static async uploadHeroImage(userId, username, id, superheroName, data) {
+		console.log('data on private > api > backend-api.js: ' + data);
 		let res = await this.request(
 			`heroes/${userId}/upload/hero/${id}/${username}/${superheroName}`,
-			data,
+			{ cloudinaryURL: data },
 			'post'
 		);
 		return res;
@@ -121,6 +123,11 @@ class BackendApi {
 	// pull comments from DB for a hero
 	static async getUserComments(id, data) {
 		let res = await this.request(`heroes/comments/${id}`, data, 'get');
+		return res;
+	}
+	// pull images from DB for a hero
+	static async getUserImages(id, data) {
+		let res = await this.request(`heroes/images/${id}`, data, 'get');
 		return res;
 	}
 

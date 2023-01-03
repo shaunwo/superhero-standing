@@ -140,7 +140,8 @@ function ProfileView() {
 									>
 										{a.superhero_name}
 									</a>{' '}
-									on {a.created_dt}
+									on {a.created_date} at{' '}
+									{a.created_time}
 								</div>
 							))}
 						</div>

@@ -36,8 +36,8 @@ function SearchCard({
 	const [commentFormData, setCommentFormData] = useState({
 		comments: '',
 	});
-	const [uploadFormData, setUploadFormData] = useState();
 	const [image, setImage] = useState('');
+	const [url, setUrl] = useState('');
 
 	// follow/unfollow a hero
 	async function handleFollow(evt) {
@@ -80,17 +80,31 @@ function SearchCard({
 			'commentsBox collapse';
 	}
 
-	// uploading image for a hero
-	function handleUpload(e) {
-		e.preventDefault();
-		console.log('e.target.heroImage: ', e.target.files);
-		setImage(e.target.files[0]);
-		//uploadFormData.append('image', image);
-		console.log('image from state: ' + image);
-		console.log(uploadFormData);
-		// uploadHeroImage is a method within the SuperheroApi class
-		//uploadHeroImage(uploadFormData, id);
-		//clearAndHideUpload(id);
+	// uploading a user-provided image
+	const uploadImage = () => {
+		const data = new FormData();
+		data.append('file', image);
+		data.append('upload_preset', 'superhero-standing');
+		data.append('cloud_name', 'dqg8wxsqn');
+		fetch('  https://api.cloudinary.com/v1_1/dqg8wxsqn/image/upload', {
+			method: 'post',
+			body: data,
+		})
+			.then((resp) => resp.json())
+			.then((data) => {
+				setUrl(data.url);
+				clearAndHideUpload(id);
+			})
+			.then({})
+			.catch((err) => console.log(err));
+	};
+	if (url) {
+		console.log(
+			'cloudinaryURL inside uploadImage on components > search > HeroSearchCard.js: ' +
+				url
+		);
+		uploadHeroImage(url, id);
+		setUrl(null);
 	}
 	function clearAndHideUpload(id) {
 		document.getElementById('upload.' + id).value = '';
@@ -102,11 +116,6 @@ function SearchCard({
 	function handleCommentChange(evt) {
 		const { name, value } = evt.target;
 		setCommentFormData((l) => ({ ...l, [name]: value }));
-	}
-	// updating the upload form fields
-	function handleUploadChange(evt) {
-		const { name, value } = evt.target;
-		setUploadFormData((l) => ({ ...l, [name]: value }));
 	}
 
 	console.log('heroFollowIds: ', heroFollowIds);
@@ -126,6 +135,9 @@ function SearchCard({
 	let heroAllUsersCommentsCount = !currentUser.heroAllUsersCommentsIds[id]
 		? 0
 		: currentUser.heroAllUsersCommentsIds[id];
+	let heroAllUsersImagesCount = !currentUser.heroAllUsersImagesIds[id]
+		? 0
+		: currentUser.heroAllUsersImagesIds[id];
 
 	// displaying the search card on the screen
 	return (
@@ -208,7 +220,13 @@ function SearchCard({
 						alt={`Upload YOUR Image for ${name}`}
 					/>
 				</a>
-				<span className="activity-counter">NumImages</span>
+				<span
+					className="activity-counter"
+					title={`${heroAllUsersImagesCount} Image(s) for ${name}`}
+				>
+					{heroAllUsersImagesCount}
+				</span>
+
 				<a href={`/search/${id}`} title={`More details on ${name}`}>
 					More Details
 				</a>
@@ -239,11 +257,13 @@ function SearchCard({
 					<input
 						type="file"
 						id={`upload.${id}`}
-						onChange={handleUpload}
-						name="file"
+						onChange={(e) => setImage(e.target.files[0])}
 						className="form-control"
 					/>
-					<button className="btn btn-sm btn-primary">
+					<button
+						className="btn btn-sm btn-primary"
+						onClick={uploadImage}
+					>
 						Upload Image
 					</button>
 				</div>

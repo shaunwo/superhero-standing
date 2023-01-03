@@ -1,9 +1,8 @@
-import React, { useContext, useState } from 'react';
-import UserContext from '../../private/auth/UserContext';
+import React from 'react';
 
-function HeroCommentsCard({
+function HeroImageCard({
 	user_id,
-	comment,
+	image_url,
 	created_date,
 	created_time,
 	username,
@@ -13,7 +12,11 @@ function HeroCommentsCard({
 	return (
 		<div className="card">
 			<div className="card-body">
-				<p>{comment}</p>
+				<p>
+					<a href={image_url} target="_blank">
+						<img src={image_url} />
+					</a>
+				</p>
 				<em>
 					by{' '}
 					<a
@@ -55,11 +58,11 @@ function HeroCommentsCard({
 onClick={handleLike}
 	<span
 					className="activity-counter"
-					title={`${heroAllUsersCommentLikedCount} Like(s) on This Comment for ${name}`}
+					title={`${heroAllUsersImageLikedCount} Like(s) This Imagea for ${name}`}
 				>
-					{heroAllUsersCommentLikedCount}
+					{heroAllUsersImageLikedCount}
  				</span>
 */
 }
 
-export default HeroCommentsCard;
+export default HeroImageCard;

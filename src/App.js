@@ -33,7 +33,14 @@ function App() {
 	const [heroAllUsersCommentsIds, setHeroAllUsersCommentsIds] = useState(
 		new Object({})
 	);
-	const [heroAllUsersUploadsIds, setHeroAllUsersUploadsIds] = useState(
+	const [heroAllUsersImagesIds, setHeroAllUsersImagesIds] = useState(
+		new Object({})
+	);
+	const [
+		heroAllUsersCommentLikedIds,
+		setHeroAllUsersCommentLikedIds,
+	] = useState(new Object({}));
+	const [heroAllUsersImageLikedIds, setHeroAllUsersImageLikedIds] = useState(
 		new Object({})
 	);
 	const [currentUser, setCurrentUser] = useState(null);
@@ -81,7 +88,7 @@ function App() {
 								currentUser.heroAllUsersCommentsIds
 							)
 						);
-						setHeroAllUsersUploadsIds(
+						setHeroAllUsersImagesIds(
 							new Object(
 								currentUser.heroAllUsersUploadsIds
 							)
@@ -96,6 +103,12 @@ function App() {
 						setPendingMortalFollowerIds(
 							currentUser.pendingMortalFollowerIds
 						);
+						setHeroAllUsersCommentLikedIds(
+							currentUser.heroAllUsersCommentLikedIds
+						);
+						setHeroAllUsersImageLikedIds(
+							currentUser.heroAllUsersImageLikedIds
+						);
 					} catch (err) {
 						console.error(
 							'App loadUserInfo: problem loading',
@@ -107,11 +120,13 @@ function App() {
 						setHeroAllUsersFollowIds(null);
 						setHeroAllUsersLikeIds(null);
 						setHeroAllUsersCommentsIds(null);
-						setHeroAllUsersUploadsIds(null);
+						setHeroAllUsersImagesIds(null);
 						setMortalFollowIds(null);
 						setPendingMortalFollowIds(null);
 						setMortalFollowerIds(null);
 						setPendingMortalFollowerIds(null);
+						setHeroAllUsersCommentLikedIds(null);
+						setHeroAllUsersImageLikedIds(null);
 					}
 				}
 				setInfoLoaded(true);
@@ -283,28 +298,31 @@ function App() {
 		}
 	}
 	// upload an image for a hero - API call, and update set of heroAllUsersCommentsIds
-	async function uploadHeroImage(uploadFormData, id) {
+	async function uploadHeroImage(cloudinaryURL, id) {
 		let heroResults = await SuperheroApi.getHero(id);
 		let hero = heroResults.data.data;
 		let superheroName = hero.name;
-		console.log('uploadFormData: ', uploadFormData);
+		console.log(
+			'cloudinaryURL on App.js, inside uploadHeroImage: ' +
+				cloudinaryURL
+		);
 		await BackendApi.uploadHeroImage(
 			currentUser.user_id,
 			currentUser.username,
 			id,
 			superheroName,
-			uploadFormData
+			cloudinaryURL
 		);
-		/*if (!currentUser.heroAllUsersUploadsIds[id]) {
-			setHeroAllUsersUploadsIds(
+		if (!currentUser.heroAllUsersUploadsIds[id]) {
+			setHeroAllUsersImagesIds(
 				(currentUser.heroAllUsersUploadsIds[id] = 1)
 			);
 		} else {
-			setHeroAllUsersUploadsIds(
+			setHeroAllUsersImagesIds(
 				(currentUser.heroAllUsersUploadsIds[id] =
 					currentUser.heroAllUsersUploadsIds[id] + 1)
 			);
-		}*/
+		}
 	}
 
 	// follow a mortal - API call, and update array of pendingMortalFollowIds
@@ -408,13 +426,15 @@ function App() {
 					heroAllUsersFollowIds,
 					heroAllUsersLikeIds,
 					heroAllUsersCommentsIds,
-					heroAllUsersUploadsIds,
+					heroAllUsersImagesIds,
 					mortalFollowIds,
 					pendingMortalFollowIds,
 					mortalFollowerIds,
 					pendingMortalFollowerIds,
 					rejectMortalFollower,
 					approveMortalFollower,
+					heroAllUsersCommentLikedIds,
+					heroAllUsersImageLikedIds,
 				}}
 			>
 				<div className="App" id="wrapper">

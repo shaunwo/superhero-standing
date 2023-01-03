@@ -232,18 +232,18 @@ class User {
 		// looking for ALL users' hero comments
 		const allUsersHeroCommentsRes = await db.query(
 			`
-					SELECT
-						c.superhero_id,
-						COUNT(*) AS superhero_comment_count
-					FROM
-						comments AS c
-					WHERE
-						c.active = TRUE
-					GROUP BY
-						superhero_id
-					ORDER BY
-						superhero_id ASC
-					`
+			SELECT
+				c.superhero_id,
+				COUNT(*) AS superhero_comment_count
+			FROM
+				comments AS c
+			WHERE
+				c.active = TRUE
+			GROUP BY
+				superhero_id
+			ORDER BY
+				superhero_id ASC
+			`
 		);
 		let heroAllUsersCommentsIds = {};
 		for (let e = 0; e < allUsersHeroCommentsRes.rows.length; e++) {
@@ -252,6 +252,76 @@ class User {
 			] = +allUsersHeroCommentsRes.rows[e].superhero_comment_count;
 		}
 		user.heroAllUsersCommentsIds = heroAllUsersCommentsIds;
+
+		// looking for ALL users' hero comments likes
+		const allUsersHeroCommentsLikesRes = await db.query(
+			`
+			SELECT
+				c.comment_id,
+				COUNT(*) AS superhero_comment_like_count
+			FROM
+				comment_likes AS c
+			GROUP BY
+				comment_id
+			ORDER BY
+				comment_id ASC
+			`
+		);
+		let heroAllUsersCommentLikedIds = {};
+		for (let e = 0; e < allUsersHeroCommentsLikesRes.rows.length; e++) {
+			heroAllUsersCommentLikedIds[
+				+allUsersHeroCommentsLikesRes.rows[e].superhero_id
+			] = +allUsersHeroCommentsLikesRes.rows[e]
+				.superhero_comment_like_count;
+		}
+		user.heroAllUsersCommentLikedIds = heroAllUsersCommentLikedIds;
+
+		// looking for ALL users' hero images
+		const allUsersHeroImagesRes = await db.query(
+			`
+			SELECT
+				i.superhero_id,
+				COUNT(*) AS superhero_image_count
+			FROM
+				images AS i
+			WHERE
+				i.active = TRUE
+			GROUP BY
+				superhero_id
+			ORDER BY
+				superhero_id ASC
+			`
+		);
+		let heroAllUsersImagesIds = {};
+		for (let e = 0; e < allUsersHeroImagesRes.rows.length; e++) {
+			heroAllUsersImagesIds[
+				+allUsersHeroImagesRes.rows[e].superhero_id
+			] = +allUsersHeroImagesRes.rows[e].superhero_image_count;
+		}
+		user.heroAllUsersImagesIds = heroAllUsersImagesIds;
+
+		// looking for ALL users' hero images likes
+		const allUsersHeroImagesLikesRes = await db.query(
+			`
+			SELECT
+				i.image_url,
+				COUNT(*) AS superhero_image_like_count
+			FROM
+				image_likes AS i
+			GROUP BY
+				image_url
+			ORDER BY
+				image_url ASC
+			`
+		);
+		let heroAllUsersImageLikedIds = {};
+		for (let e = 0; e < allUsersHeroImagesLikesRes.rows.length; e++) {
+			heroAllUsersImageLikedIds[
+				+allUsersHeroImagesLikesRes.rows[e].superhero_id
+			] = +allUsersHeroImagesLikesRes.rows[e]
+				.superhero_comment_like_count;
+		}
+		user.heroAllUsersImageLikedIds = heroAllUsersImageLikedIds;
 
 		// looking for this user's APPROVED mortal followings
 		const userMortalFollowsRes = await db.query(
@@ -399,8 +469,9 @@ class User {
 			`
 			SELECT 
 				*,
-				to_char(created_dt, 'DD/MM/YYY') AS formated_created_dt
-           	FROM
+				to_char(created_dt, 'FMMM/FMDD/YYYY') AS created_date,
+				to_char(created_dt, 'FMHH12:MI AM') AS created_time
+			FROM
 				recent_activity
            	WHERE
 				user_id = $1
