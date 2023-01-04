@@ -83,6 +83,84 @@ router.get(
 	}
 );
 
+// LIKE / UNLIKE A COMMENT
+router.get(
+	'/:userId/like/comment/:heroId/:username/:superheroName/:comment_id',
+	ensureCorrectUserId,
+	async function(req, res, next) {
+		try {
+			const comment_like_id = await Hero.likeComment(
+				req.params.userId,
+				req.params.username,
+				req.params.heroId,
+				req.params.superheroName,
+				req.params.comment_id
+			);
+			return res.json({ comment_like_id });
+		} catch (err) {
+			return next(err);
+		}
+	}
+);
+router.get(
+	'/:userId/unlike/comment/:heroId/:username/:superheroName/:comment_id',
+	ensureCorrectUserId,
+	async function(req, res, next) {
+		try {
+			const comment_like_id = await Hero.unlikeComment(
+				req.params.userId,
+				req.params.username,
+				req.params.heroId,
+				req.params.superheroName,
+				req.params.comment_id
+			);
+			return res.json({ comment_like_id });
+		} catch (err) {
+			return next(err);
+		}
+	}
+);
+
+// LIKE / UNLIKE AN IMAGE
+router.post(
+	'/:userId/like/image/:heroId/:username/:superheroName',
+	ensureCorrectUserId,
+	async function(req, res, next) {
+		const { image_url } = req.body;
+		try {
+			const image_like_id = await Hero.likeImage(
+				req.params.userId,
+				req.params.username,
+				req.params.heroId,
+				req.params.superheroName,
+				image_url
+			);
+			return res.json({ image_like_id });
+		} catch (err) {
+			return next(err);
+		}
+	}
+);
+router.post(
+	'/:userId/unlike/image/:heroId/:username/:superheroName',
+	ensureCorrectUserId,
+	async function(req, res, next) {
+		try {
+			const { image_url } = req.body;
+			const image_like_id = await Hero.unlikeImage(
+				req.params.userId,
+				req.params.username,
+				req.params.heroId,
+				req.params.superheroName,
+				image_url
+			);
+			return res.json({ image_like_id });
+		} catch (err) {
+			return next(err);
+		}
+	}
+);
+
 router.post(
 	'/:userId/comment/hero/:heroId/:username/:superheroName',
 	ensureCorrectUserId,

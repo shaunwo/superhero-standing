@@ -43,6 +43,10 @@ function App() {
 	const [heroAllUsersImageLikedIds, setHeroAllUsersImageLikedIds] = useState(
 		new Object({})
 	);
+	const [heroCommentLikedIds, setHeroCommentLikedIds] = useState(
+		new Set([])
+	);
+	const [heroImageLikedIds, setHeroImageLikedIds] = useState(new Set([]));
 	const [currentUser, setCurrentUser] = useState(null);
 	const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID);
 
@@ -103,6 +107,12 @@ function App() {
 						setPendingMortalFollowerIds(
 							currentUser.pendingMortalFollowerIds
 						);
+						setHeroCommentLikedIds(
+							new Set(currentUser.heroCommentLikedIds)
+						);
+						setHeroImageLikedIds(
+							new Set(currentUser.heroImageLikedIds)
+						);
 						setHeroAllUsersCommentLikedIds(
 							currentUser.heroAllUsersCommentLikedIds
 						);
@@ -125,6 +135,8 @@ function App() {
 						setPendingMortalFollowIds(null);
 						setMortalFollowerIds(null);
 						setPendingMortalFollowerIds(null);
+						setHeroCommentLikedIds(null);
+						setHeroImageLikedIds(null);
 						setHeroAllUsersCommentLikedIds(null);
 						setHeroAllUsersImageLikedIds(null);
 					}
@@ -271,6 +283,116 @@ function App() {
 		setHeroAllUsersLikeIds(
 			(currentUser.heroAllUsersLikeIds[id] =
 				currentUser.heroAllUsersLikeIds[id] - 1)
+		);
+	}
+
+	// like a comment - API call, and update sets of LikeHeroIds
+	async function likeComment(comment_id, superhero_id) {
+		let heroResults = await SuperheroApi.getHero(superhero_id);
+		let hero = heroResults.data.data;
+		let superheroName = hero.name;
+
+		console.log(
+			'comment_id in likeComment method on App.js: ',
+			comment_id
+		);
+		console.log(
+			'superhero_id in likeComment method on App.js: ',
+			superhero_id
+		);
+		await BackendApi.likeComment(
+			currentUser.user_id,
+			currentUser.username,
+			superhero_id,
+			superheroName,
+			comment_id
+		);
+		setHeroCommentLikedIds(
+			new Set([...heroCommentLikedIds, +comment_id])
+		);
+		if (!currentUser.heroAllUsersCommentLikedIds[comment_id]) {
+			setHeroAllUsersCommentLikedIds(
+				(currentUser.heroAllUsersCommentLikedIds[comment_id] = 1)
+			);
+		} else {
+			setHeroAllUsersCommentLikedIds(
+				(currentUser.heroAllUsersCommentLikedIds[comment_id] =
+					currentUser.heroAllUsersCommentLikedIds[comment_id] +
+					1)
+			);
+		}
+	}
+	// UNlike a comment - API call, and update set of LikeHeroIds
+	async function unlikeComment(comment_id, superhero_id) {
+		let heroResults = await SuperheroApi.getHero(superhero_id);
+		let hero = heroResults.data.data;
+		let superheroName = hero.name;
+		await BackendApi.unlikeComment(
+			currentUser.user_id,
+			currentUser.username,
+			superhero_id,
+			superheroName,
+			comment_id
+		);
+		setHeroCommentLikedIds((s) => {
+			s.delete(+comment_id);
+			return new Set(s);
+		});
+		setHeroAllUsersCommentLikedIds(
+			(currentUser.heroAllUsersCommentLikedIds[comment_id] =
+				currentUser.heroAllUsersCommentLikedIds[comment_id] - 1)
+		);
+	}
+
+	// like an image - API call, and update sets of LikeHeroIds
+	async function likeImage(image_url, superhero_id) {
+		let heroResults = await SuperheroApi.getHero(superhero_id);
+		let hero = heroResults.data.data;
+		let superheroName = hero.name;
+
+		console.log('image_url in likeImage method on App.js: ', image_url);
+		console.log(
+			'superhero_id in likeImage method on App.js: ',
+			superhero_id
+		);
+		await BackendApi.likeImage(
+			currentUser.user_id,
+			currentUser.username,
+			superhero_id,
+			superheroName,
+			image_url
+		);
+		setHeroImageLikedIds(new Set([...heroImageLikedIds, image_url]));
+		if (!currentUser.heroAllUsersImageLikedIds[image_url]) {
+			setHeroAllUsersImageLikedIds(
+				(currentUser.heroAllUsersImageLikedIds[image_url] = 1)
+			);
+		} else {
+			setHeroAllUsersImageLikedIds(
+				(currentUser.heroAllUsersImageLikedIds[image_url] =
+					currentUser.heroAllUsersImageLikedIds[image_url] + 1)
+			);
+		}
+	}
+	// UNlike an image - API call, and update set of LikeHeroIds
+	async function unlikeImage(image_url, superhero_id) {
+		let heroResults = await SuperheroApi.getHero(superhero_id);
+		let hero = heroResults.data.data;
+		let superheroName = hero.name;
+		await BackendApi.unlikeImage(
+			currentUser.user_id,
+			currentUser.username,
+			superhero_id,
+			superheroName,
+			image_url
+		);
+		setHeroImageLikedIds((s) => {
+			s.delete(image_url);
+			return new Set(s);
+		});
+		setHeroAllUsersImageLikedIds(
+			(currentUser.heroAllUsersImageLikedIds[image_url] =
+				currentUser.heroAllUsersImageLikedIds[image_url] - 1)
 		);
 	}
 
@@ -433,8 +555,14 @@ function App() {
 					pendingMortalFollowerIds,
 					rejectMortalFollower,
 					approveMortalFollower,
+					heroCommentLikedIds,
+					heroImageLikedIds,
 					heroAllUsersCommentLikedIds,
 					heroAllUsersImageLikedIds,
+					likeComment,
+					unlikeComment,
+					likeImage,
+					unlikeImage,
 				}}
 			>
 				<div className="App" id="wrapper">

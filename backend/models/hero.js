@@ -132,32 +132,39 @@ class Hero {
 		return follow_id;
 	}
 
-	// like/unlike a hero
-	static async likeHero(userId, username, heroId, superheroName) {
+	// LIKE/UNLIKE a comment
+	static async likeComment(
+		userId,
+		username,
+		heroId,
+		superheroName,
+		commentId
+	) {
 		const likeRes = await db.query(
 			`
-          INSERT INTO
-               likes
-          (
-               user_id,
-               superhero_id,
-               active
-          )
-          VALUES
-               ($1, $2, TRUE)
-          RETURNING like_id
+			INSERT INTO
+				comment_likes
+			(
+				user_id,
+				comment_id
+			)
+			VALUES
+				($1, $2)
+			RETURNING
+				comment_like_id
           `,
-			[userId, heroId]
+			[userId, commentId]
 		);
 		const like_id = likeRes.rows[0];
 
-		if (!like_id) throw new NotFoundError(`No like: ${heroId}`);
+		if (!like_id)
+			throw new NotFoundError(`No comment_like: ${commentId}`);
 
 		// adding to activity log
 		const likeActivityRes = await db.query(
 			`
-          INSERT INTO
-               recent_activity
+			INSERT INTO
+				recent_activity
 			(
 				user_id,
 				username,
@@ -169,34 +176,39 @@ class Hero {
 				($1, $2, $3, $4, $5)
 			RETURNING activity_id
 			`,
-			[userId, username, heroId, superheroName, 'liked']
+			[userId, username, heroId, superheroName, 'liked a comment on']
 		);
 		const activity_id = likeActivityRes.rows[0];
 
 		if (!activity_id)
-			throw new NotFoundError(`No like activity: ${heroId}`);
+			throw new NotFoundError(`No comment_like: ${commentId}`);
 
 		return like_id;
 	}
-	static async unlikeHero(userId, username, heroId, superheroName) {
+	static async unlikeComment(
+		userId,
+		username,
+		heroId,
+		superheroName,
+		commentId
+	) {
 		const likeRes = await db.query(
 			`
           DELETE FROM
-               likes
+               comment_likes
           WHERE
                user_id=$1
                     AND
-               superhero_id=$2
-          RETURNING like_id
+               comment_id=$2
+          RETURNING
+			comment_like_id
          `,
-			[userId, heroId]
+			[userId, commentId]
 		);
-		console.log('SQL result in backend > models > user.js: ', likeRes);
 		const like_id = likeRes.rows[0];
 
-		if (!like_id) throw new NotFoundError(`No unlike: ${heroId}`);
-
-		const activityDescription = 'u|' + userId + ' unliked h|' + heroId;
+		if (!like_id)
+			throw new NotFoundError(`No comment_like: ${commentId}`);
 
 		// adding to activity log
 		const unlikeActivityRes = await db.query(
@@ -214,6 +226,194 @@ class Hero {
 				($1, $2, $3, $4, $5)
 			RETURNING activity_id
 			`,
+			[userId, username, heroId, superheroName, 'unliked a comment on']
+		);
+		const activity_id = unlikeActivityRes.rows[0];
+
+		if (!activity_id)
+			throw new NotFoundError(`No comment_like: ${commentId}`);
+
+		return like_id;
+	}
+
+	// LIKE/UNLIKE an image
+	static async likeImage(userId, username, heroId, superheroName, imageUrl) {
+		const likeRes = await db.query(
+			`
+			INSERT INTO
+				image_likes
+			(
+				user_id,
+				image_url
+			)
+			VALUES
+				($1, $2)
+			RETURNING
+				image_like_id
+          `,
+			[userId, imageUrl]
+		);
+		const like_id = likeRes.rows[0];
+
+		if (!like_id) throw new NotFoundError(`No image_like: ${imageUrl}`);
+
+		// adding to activity log
+		const likeActivityRes = await db.query(
+			`
+			INSERT INTO
+				recent_activity
+			(
+				user_id,
+				username,
+				superhero_id,
+				superhero_name,
+				description
+			)
+			VALUES
+				($1, $2, $3, $4, $5)
+			RETURNING activity_id
+			`,
+			[userId, username, heroId, superheroName, 'liked an image for']
+		);
+		const activity_id = likeActivityRes.rows[0];
+
+		if (!activity_id)
+			throw new NotFoundError(`No image_like: ${imageUrl}`);
+
+		return like_id;
+	}
+	static async unlikeImage(
+		userId,
+		username,
+		heroId,
+		superheroName,
+		imageUrl
+	) {
+		const likeRes = await db.query(
+			`
+          DELETE FROM
+               image_likes
+          WHERE
+               user_id=$1
+                    AND
+               image_url=$2
+          RETURNING
+			image_like_id
+         `,
+			[userId, imageUrl]
+		);
+		const like_id = likeRes.rows[0];
+
+		if (!like_id) throw new NotFoundError(`No image_like: ${imageUrl}`);
+
+		// adding to activity log
+		const unlikeActivityRes = await db.query(
+			`
+          INSERT INTO
+               recent_activity
+			(
+				user_id,
+				username,
+				superhero_id,
+				superhero_name,
+				description
+			)
+			VALUES
+				($1, $2, $3, $4, $5)
+			RETURNING activity_id
+			`,
+			[userId, username, heroId, superheroName, 'unliked an image for']
+		);
+		const activity_id = unlikeActivityRes.rows[0];
+
+		if (!activity_id)
+			throw new NotFoundError(`No image_like: ${imageUrl}`);
+
+		return like_id;
+	}
+
+	// like/unlike a hero
+	static async likeHero(userId, username, heroId, superheroName) {
+		const likeRes = await db.query(
+			`
+			INSERT INTO
+				likes
+			(
+				user_id,
+				superhero_id,
+				active
+			)
+			VALUES
+				($1, $2, TRUE)
+			RETURNING like_id
+			`,
+			[userId, heroId]
+		);
+		const like_id = likeRes.rows[0];
+
+		if (!like_id) throw new NotFoundError(`No like: ${heroId}`);
+
+		// adding to activity log
+		const likeActivityRes = await db.query(
+			`
+			INSERT INTO
+				recent_activity
+				(
+					user_id,
+					username,
+					superhero_id,
+					superhero_name,
+					description
+				)
+				VALUES
+					($1, $2, $3, $4, $5)
+				RETURNING activity_id
+				`,
+			[userId, username, heroId, superheroName, 'liked']
+		);
+		const activity_id = likeActivityRes.rows[0];
+
+		if (!activity_id)
+			throw new NotFoundError(`No like activity: ${heroId}`);
+
+		return like_id;
+	}
+	static async unlikeHero(userId, username, heroId, superheroName) {
+		const likeRes = await db.query(
+			`
+			DELETE FROM
+				likes
+			WHERE
+				user_id=$1
+					AND
+				superhero_id=$2
+			RETURNING like_id
+		    `,
+			[userId, heroId]
+		);
+		console.log('SQL result in backend > models > user.js: ', likeRes);
+		const like_id = likeRes.rows[0];
+
+		if (!like_id) throw new NotFoundError(`No unlike: ${heroId}`);
+
+		const activityDescription = 'u|' + userId + ' unliked h|' + heroId;
+
+		// adding to activity log
+		const unlikeActivityRes = await db.query(
+			`
+			INSERT INTO
+				recent_activity
+				(
+					user_id,
+					username,
+					superhero_id,
+					superhero_name,
+					description
+				)
+				VALUES
+					($1, $2, $3, $4, $5)
+				RETURNING activity_id
+				`,
 			[userId, username, heroId, superheroName, 'unliked']
 		);
 		const activity_id = unlikeActivityRes.rows[0];

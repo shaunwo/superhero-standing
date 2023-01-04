@@ -100,6 +100,59 @@ class BackendApi {
 		);
 		return res;
 	}
+
+	// like a comment
+	static async likeComment(
+		userId,
+		username,
+		id,
+		superheroName,
+		comment_id,
+		data
+	) {
+		let res = await this.request(
+			`heroes/${userId}/like/comment/${id}/${username}/${superheroName}/${comment_id}`,
+			data,
+			'get'
+		);
+		return res;
+	}
+	// unlike a comment
+	static async unlikeComment(
+		userId,
+		username,
+		id,
+		superheroName,
+		comment_id,
+		data
+	) {
+		let res = await this.request(
+			`heroes/${userId}/unlike/comment/${id}/${username}/${superheroName}/${comment_id}`,
+			data,
+			'get'
+		);
+		return res;
+	}
+
+	// like an image
+	static async likeImage(userId, username, id, superheroName, image_url) {
+		let res = await this.request(
+			`heroes/${userId}/like/image/${id}/${username}/${superheroName}`,
+			{ image_url: image_url },
+			'post'
+		);
+		return res;
+	}
+	// unlike an image
+	static async unlikeImage(userId, username, id, superheroName, image_url) {
+		let res = await this.request(
+			`heroes/${userId}/unlike/image/${id}/${username}/${superheroName}`,
+			{ image_url: image_url },
+			'post'
+		);
+		return res;
+	}
+
 	// comment on a hero
 	static async commentOnHero(userId, username, id, superheroName, data) {
 		let res = await this.request(

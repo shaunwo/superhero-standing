@@ -181,6 +181,48 @@ class User {
 
 		user.heroLikeIds = userHeroLikesRes.rows.map((b) => b.superhero_id);
 
+		// looking for currentUser's hero comments likes
+		const usersHeroCommentsLikesRes = await db.query(
+			`
+			SELECT
+				c.comment_id,
+				COUNT(*) AS superhero_comment_like_count
+			FROM
+				comment_likes AS c
+			WHERE
+				c.user_id = $1
+			GROUP BY
+				comment_id
+			ORDER BY
+				comment_id ASC
+			`,
+			[user.user_id]
+		);
+		user.heroCommentLikedIds = usersHeroCommentsLikesRes.rows.map(
+			(b) => b.comment_id
+		);
+
+		// looking for currentUser's hero images likes
+		const usersHeroImagesLikesRes = await db.query(
+			`
+			SELECT
+				i.image_url,
+				COUNT(*) AS superhero_image_like_count
+			FROM
+				image_likes AS i
+			WHERE
+				i.user_id = $1
+			GROUP BY
+				image_url
+			ORDER BY
+				image_url ASC
+			`,
+			[user.user_id]
+		);
+		user.heroImageLikedIds = usersHeroImagesLikesRes.rows.map(
+			(b) => b.image_url
+		);
+
 		// looking for ALL users' hero followings
 		const allUsersHeroFollowsRes = await db.query(
 			`
@@ -270,7 +312,7 @@ class User {
 		let heroAllUsersCommentLikedIds = {};
 		for (let e = 0; e < allUsersHeroCommentsLikesRes.rows.length; e++) {
 			heroAllUsersCommentLikedIds[
-				+allUsersHeroCommentsLikesRes.rows[e].superhero_id
+				+allUsersHeroCommentsLikesRes.rows[e].comment_id
 			] = +allUsersHeroCommentsLikesRes.rows[e]
 				.superhero_comment_like_count;
 		}
@@ -317,9 +359,9 @@ class User {
 		let heroAllUsersImageLikedIds = {};
 		for (let e = 0; e < allUsersHeroImagesLikesRes.rows.length; e++) {
 			heroAllUsersImageLikedIds[
-				+allUsersHeroImagesLikesRes.rows[e].superhero_id
+				allUsersHeroImagesLikesRes.rows[e].image_url
 			] = +allUsersHeroImagesLikesRes.rows[e]
-				.superhero_comment_like_count;
+				.superhero_image_like_count;
 		}
 		user.heroAllUsersImageLikedIds = heroAllUsersImageLikedIds;
 

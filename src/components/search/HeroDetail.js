@@ -29,6 +29,9 @@ function HeroDetail() {
 		likeHero,
 		unlikeHero,
 		commentOnHero,
+		heroCommentLikedIds,
+		likeComment,
+		unlikeComment,
 	} = useContext(UserContext);
 	const [followed, setFollowed] = useState();
 	const [liked, setLiked] = useState();
@@ -190,6 +193,8 @@ function HeroDetail() {
 		? 0
 		: currentUser.heroAllUsersImagesIds[id];
 
+	console.log('heroCommentLikedIds: ', heroCommentLikedIds);
+
 	// displaying the hero details on the screen
 	return (
 		<div id="HeroDetail">
@@ -303,12 +308,14 @@ function HeroDetail() {
 							<div id="SuperheroComments">
 								{heroComments.map((c) => (
 									<HeroCommentCard
+										comment_id={c.comment_id}
 										user_id={c.user_id}
 										comment={c.comments}
 										created_date={c.created_date}
 										created_time={c.created_time}
 										username={c.username}
 										superhero_name={hero['name']}
+										superhero_id={hero['id']}
 									/>
 								))}
 							</div>
@@ -328,6 +335,7 @@ function HeroDetail() {
 										created_time={i.created_time}
 										username={i.username}
 										superhero_name={hero['name']}
+										superhero_id={hero['id']}
 									/>
 								))}
 							</div>

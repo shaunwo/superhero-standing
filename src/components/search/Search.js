@@ -3,7 +3,7 @@ import UserContext from '../../private/auth/UserContext';
 import SearchForm from '../common/SearchForm';
 import SearchCard from './HeroSearchCard';
 import SuperheroApi from '../../private/api/superhero-api';
-//import LoadingSpinner from './common/LoadingSpinner';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 function Search() {
 	console.log('Search for superheros');
@@ -50,8 +50,6 @@ function Search() {
 
 	// displaying the spinner until the API call returns the heros data
 	//if (!heros) return <LoadingSpinner />;
-
-	console.log('heroFollowIds on Search.js: ', heroFollowIds);
 
 	return (
 		<>
