@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:3001/api';
+const BE_API_URL = process.env.BE_API_URL || 'http://localhost:3001/api';
 
 class SuperheroApi {
 	// the token for interactive with the API will be stored here.
@@ -11,7 +11,7 @@ class SuperheroApi {
 		console.log('API Call param: ' + param);
 		//there are multiple ways to pass an authorization token, this is how you pass it in the header.
 		//this has been provided to show you another way to pass the token. you are only expected to read this code for this project.
-		const url = `${BASE_URL}${endpoint}/${encodeURIComponent(param)}`;
+		const url = `${BE_API_URL}${endpoint}/${encodeURIComponent(param)}`;
 		console.log('URL for API call: ' + url);
 		const headers = {
 			'Access-Control-Allow-Origin': '*',
