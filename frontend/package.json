@@ -33,7 +33,7 @@
 		"test": "react-scripts test",
 		"eject": "react-scripts eject",
 		"start-fe": "react-scripts start",
-		"start-be": "nodemon backend/server.js"
+		"start-be": "nodemon ../backend/server.js"
 	},
 	"eslintConfig": {
 		"extends": [

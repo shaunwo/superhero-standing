@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const BE_API_URL = process.env.BE_API_URL || 'http://localhost:3001/api';
+const BE_API_URL =
+	`${process.env.REACT_APP_BASE_URL}/api` || 'http://localhost:3001/api';
 
 class SuperheroApi {
 	// the token for interactive with the API will be stored here.
