@@ -74,7 +74,8 @@ To get this application running, download the code and run the following in the 
 
 Make sure that PostgreSQL is running, and then you can run the commands below that will run the Backend and Frontend together, using the **_concurrently_** package.
 
-1. `npm i`
-2. `npm start`
+1. `cd frontend`
+2. `npm i`
+3. `npm start`
 
 Go to [http://localhost:3000/](http://localhost:3000/) in your browser to run/view the application.
